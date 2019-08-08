@@ -1,0 +1,19 @@
+{
+	"name": "DatControlMaster_Source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DataControlMaster",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": {
+				"value": "@concat(item().SourceObjectName)",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,22 @@
+{
+	"name": "ADLSSTAGE_REM",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureBlobFSFile",
+		"typeProperties": {
+			"fileName": {
+				"value": "@concat(item().SourceObjectName,'.txt')",
+				"type": "Expression"
+			},
+			"folderPath": {
+				"value": "@concat(pipeline().parameters.LoadType,'/',item().ADFPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
