@@ -350,7 +350,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[USP_Logger]",
+								"storedProcedureName": "[BI].[SP_M_Logger]",
 								"storedProcedureParameters": {
 									"CopyDuration": {
 										"value": {
@@ -440,7 +440,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[USP_Logger]",
+								"storedProcedureName": "[BI].[SP_M_Logger]",
 								"storedProcedureParameters": {
 									"CopyDuration": {
 										"value": null,
@@ -585,7 +585,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[USP_Logger]",
+								"storedProcedureName": "[BI].[SP_M_Logger]",
 								"storedProcedureParameters": {
 									"CopyDuration": {
 										"value": {
@@ -678,7 +678,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[USP_Logger]",
+								"storedProcedureName": "[BI].[SP_M_Logger]",
 								"storedProcedureParameters": {
 									"CopyDuration": {
 										"value": null,
@@ -826,7 +826,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[USP_Logger]",
+								"storedProcedureName": "[BI].[SP_M_Logger]",
 								"storedProcedureParameters": {
 									"CopyDuration": {
 										"value": {
@@ -916,7 +916,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[USP_Logger]",
+								"storedProcedureName": "[BI].[SP_M_Logger]",
 								"storedProcedureParameters": {
 									"CopyDuration": {
 										"value": null,
@@ -1025,7 +1025,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[USP_Logger]",
+								"storedProcedureName": "[BI].[SP_M_Logger]",
 								"storedProcedureParameters": {
 									"CopyDuration": {
 										"value": null,
@@ -1103,7 +1103,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[USP_Logger]",
+								"storedProcedureName": "[BI].[SP_M_Logger]",
 								"storedProcedureParameters": {
 									"CopyDuration": {
 										"value": null,
