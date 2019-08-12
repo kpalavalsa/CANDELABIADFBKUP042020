@@ -15,7 +15,7 @@
 					"type": "Expression"
 				},
 				"fileSystem": {
-					"value": "@concat(pipeline().parameters.LoadType,'/',item().ADfPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
+					"value": "@concat(item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().ADLSPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
 					"type": "Expression"
 				}
 			},
