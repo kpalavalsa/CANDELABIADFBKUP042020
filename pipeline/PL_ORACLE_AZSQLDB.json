@@ -16,7 +16,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[USP_Logger]",
+					"storedProcedureName": "[BI].[SP_M_Logger]",
 					"storedProcedureParameters": {
 						"CopyDuration": {
 							"value": null,
@@ -93,7 +93,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, blobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.ObjectsList where SourceServer='Oracle' and IsActive = 1 and LOADTYPE='FULL'"
+						"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, blobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Oracle' and IsActive = 1 and LOADTYPE='FULL'"
 					},
 					"dataset": {
 						"referenceName": "ObjectsList",
@@ -122,7 +122,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[USP_Logger]",
+					"storedProcedureName": "[BI].[SP_M_Logger]",
 					"storedProcedureParameters": {
 						"CopyDuration": {
 							"value": null,
@@ -197,7 +197,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[USP_Logger]",
+					"storedProcedureName": "[BI].[SP_M_Logger]",
 					"storedProcedureParameters": {
 						"CopyDuration": {
 							"value": null,
