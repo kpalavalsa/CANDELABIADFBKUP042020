@@ -782,7 +782,10 @@
 										"referenceName": "logstore",
 										"type": "LinkedServiceReference"
 									},
-									"path": "logs"
+									"path": {
+										"value": "@concat('candelabiadf','/',item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().BlobLogsPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
+										"type": "Expression"
+									}
 								}
 							},
 							"inputs": [
