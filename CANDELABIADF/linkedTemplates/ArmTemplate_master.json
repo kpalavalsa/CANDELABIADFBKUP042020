@@ -1,0 +1,112 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "CANDELABIADF"
+		},
+		"AzureSqlDatabase_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
+		},
+		"DataControlMaster_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DataControlMaster'"
+		},
+		"DataLakeStorage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'DataLakeStorage'"
+		},
+		"Salesforce_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Salesforce'"
+		},
+		"Salesforce_securityToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'securityToken' of 'Salesforce'"
+		},
+		"logstore_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'logstore'"
+		},
+		"ADLSSTAGE_REM_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@concat(item().SourceObjectName,'.txt')"
+		},
+		"ADLSSTAGE_REM_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@concat(item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().ADLSPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)"
+		},
+		"DataLakeStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://candelabiadls.dfs.core.windows.net"
+		},
+		"Salesforce_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "azureapi@candelamedical.com"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas Token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureSqlDatabase_connectionString": {
+						"value": "[parameters('AzureSqlDatabase_connectionString')]"
+					},
+					"DataControlMaster_connectionString": {
+						"value": "[parameters('DataControlMaster_connectionString')]"
+					},
+					"DataLakeStorage_accountKey": {
+						"value": "[parameters('DataLakeStorage_accountKey')]"
+					},
+					"Salesforce_password": {
+						"value": "[parameters('Salesforce_password')]"
+					},
+					"Salesforce_securityToken": {
+						"value": "[parameters('Salesforce_securityToken')]"
+					},
+					"logstore_connectionString": {
+						"value": "[parameters('logstore_connectionString')]"
+					},
+					"DataLakeStorage_properties_typeProperties_url": {
+						"value": "[parameters('DataLakeStorage_properties_typeProperties_url')]"
+					},
+					"Salesforce_properties_typeProperties_username": {
+						"value": "[parameters('Salesforce_properties_typeProperties_username')]"
+					},
+					"ADLSSTAGE_REM_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLSSTAGE_REM_properties_typeProperties_fileName')]"
+					},
+					"ADLSSTAGE_REM_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLSSTAGE_REM_properties_typeProperties_folderPath')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

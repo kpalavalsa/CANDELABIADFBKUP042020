@@ -1,0 +1,39 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "CANDELABIADF"
+		},
+		"AzureSqlDatabase_connectionString": {
+			"value": ""
+		},
+		"DataControlMaster_connectionString": {
+			"value": ""
+		},
+		"DataLakeStorage_accountKey": {
+			"value": ""
+		},
+		"Salesforce_password": {
+			"value": ""
+		},
+		"Salesforce_securityToken": {
+			"value": ""
+		},
+		"logstore_connectionString": {
+			"value": ""
+		},
+		"ADLSSTAGE_REM_properties_typeProperties_fileName": {
+			"value": "@concat(item().SourceObjectName,'.txt')"
+		},
+		"ADLSSTAGE_REM_properties_typeProperties_folderPath": {
+			"value": "@concat(item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().ADLSPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)"
+		},
+		"DataLakeStorage_properties_typeProperties_url": {
+			"value": "https://candelabiadls.dfs.core.windows.net"
+		},
+		"Salesforce_properties_typeProperties_username": {
+			"value": "azureapi@candelamedical.com"
+		}
+	}
+}
