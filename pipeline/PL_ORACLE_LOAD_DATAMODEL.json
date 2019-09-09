@@ -284,7 +284,7 @@
 										"type": "String"
 									},
 									"Summary": {
-										"value": "ErrorCount For the Data Load is fetched",
+										"value": "Loading Dimensions is completed successfully",
 										"type": "String"
 									}
 								}
@@ -322,7 +322,7 @@
 									},
 									"ErrorInfo": {
 										"value": {
-											"value": "@substring(activity('GetErrorCount').Error.Message,0,if(greater(length(activity('GetErrorCount').Error.Message),1990),1990,sub(length(activity('GetErrorCount').Error.Message),2)))",
+											"value": "@substring(activity('Load_Dimensions').Error.Message,0,if(greater(length(activity('Load_Dimensions').Error.Message),1990),1990,sub(length(activity('Load_Dimensions').Error.Message),2)))",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -362,7 +362,7 @@
 										"type": "String"
 									},
 									"Summary": {
-										"value": "Failed to Fetch the number of errors in data load",
+										"value": "Failed to Load Dimensions ",
 										"type": "String"
 									}
 								}
@@ -457,7 +457,7 @@
 										"type": "String"
 									},
 									"Summary": {
-										"value": "ErrorCount For the Data Load is fetched",
+										"value": "Loading Fact tables are completed successfully",
 										"type": "String"
 									}
 								}
