@@ -36,7 +36,17 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"waitOnCompletion": true
+					"pipeline": {
+						"referenceName": "PL_ORACLE_LOAD_DATAMODEL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -57,7 +67,18 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": {
+						"value": "@concat('SendEmail?RunId=',pipeline().RunId,'&ProcessName=',pipeline().Pipeline)",
+						"type": "Expression"
+					},
+					"method": "GET"
+				},
+				"linkedServiceName": {
+					"referenceName": "EmailService",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"annotations": []
