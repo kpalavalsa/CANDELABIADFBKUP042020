@@ -563,7 +563,18 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"functionName": {
+									"value": "@concat('PROCESSAAS?modelname=','CANDELAKPI&ProcessName=',pipeline().Pipeline,'&RunId=',pipeline().parameters.RunId)",
+									"type": "Expression"
+								},
+								"method": "GET"
+							},
+							"linkedServiceName": {
+								"referenceName": "ProcessAAS",
+								"type": "LinkedServiceReference"
+							}
 						},
 						{
 							"name": "Log7",
@@ -630,7 +641,7 @@
 										"type": "String"
 									},
 									"Summary": {
-										"value": "ErrorCount For the Data Load is fetched",
+										"value": "Processing AAS Model is completed successfully",
 										"type": "String"
 									}
 								}
@@ -668,7 +679,7 @@
 									},
 									"ErrorInfo": {
 										"value": {
-											"value": "@substring(activity('GetErrorCount').Error.Message,0,if(greater(length(activity('GetErrorCount').Error.Message),1990),1990,sub(length(activity('GetErrorCount').Error.Message),2)))",
+											"value": "@substring(activity('ProcessAAS').Error.Message,0,if(greater(length(activity('ProcessAAS').Error.Message),1990),1990,sub(length(activity('ProcessAAS').Error.Message),2)))",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -708,7 +719,7 @@
 										"type": "String"
 									},
 									"Summary": {
-										"value": "Failed to Fetch the number of errors in data load",
+										"value": "Failed to Process AAS Model",
 										"type": "String"
 									}
 								}
