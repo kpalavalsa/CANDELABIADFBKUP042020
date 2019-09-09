@@ -1,0 +1,89 @@
+{
+	"name": "PL_SALESFORCE_MAIN_INCREMENTAL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Calling Oracle Pipeline",
+				"description": "",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_SALESFORCE_AZSQLDB",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"LoadType": "Full"
+					}
+				}
+			},
+			{
+				"name": "Calling DataModel",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Calling Oracle Pipeline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_SALESFORCE_LOAD_DATAMODEL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Email Notification",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "Calling DataModel",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": {
+						"value": "@concat('SendEmail?RunId=',pipeline().RunId,'&ProcessName=',pipeline().Pipeline)",
+						"type": "Expression"
+					},
+					"method": "GET"
+				},
+				"linkedServiceName": {
+					"referenceName": "EmailService",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "SalesForce"
+		},
+		"annotations": []
+	}
+}
