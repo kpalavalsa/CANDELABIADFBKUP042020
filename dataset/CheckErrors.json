@@ -1,0 +1,72 @@
+{
+	"name": "CheckErrors",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ProcessName",
+				"type": "varchar"
+			},
+			{
+				"name": "Summary",
+				"type": "varchar"
+			},
+			{
+				"name": "Status",
+				"type": "varchar"
+			},
+			{
+				"name": "ErrorInfo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RunId",
+				"type": "varchar"
+			},
+			{
+				"name": "LoggedTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "RecordsInSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "RecordsCopiedToDest",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SkippedRecordsToMove",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CopyDuration(Seconds)",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "LOGSPATH",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "BI",
+			"table": "LG_PROCESSLOGS"
+		}
+	}
+}
