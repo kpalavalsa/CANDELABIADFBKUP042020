@@ -10,7 +10,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_ORACLE_AZSQLDB",
+						"referenceName": "PL_INCREMENTAL_ORACLE_AZSQLDB",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
