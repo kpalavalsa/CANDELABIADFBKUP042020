@@ -10,7 +10,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_SALESFORCE_AZSQLDB",
+						"referenceName": "PL_INCREMENTAL_SALESFORCE_AZSSQLDB",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
