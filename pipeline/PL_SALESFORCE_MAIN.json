@@ -81,6 +81,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "SalesForce"
+		},
 		"annotations": []
 	}
 }

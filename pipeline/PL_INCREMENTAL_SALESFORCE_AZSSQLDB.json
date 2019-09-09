@@ -1377,6 +1377,9 @@
 				"defaultValue": "Incremental"
 			}
 		},
+		"folder": {
+			"name": "SalesForce"
+		},
 		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
