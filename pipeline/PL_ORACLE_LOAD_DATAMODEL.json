@@ -739,6 +739,9 @@
 				"defaultValue": "-1"
 			}
 		},
+		"folder": {
+			"name": "Oracle"
+		},
 		"annotations": []
 	}
 }

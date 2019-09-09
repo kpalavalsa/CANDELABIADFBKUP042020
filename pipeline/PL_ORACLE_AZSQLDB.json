@@ -1184,6 +1184,9 @@
 				"defaultValue": "test"
 			}
 		},
+		"folder": {
+			"name": "Oracle"
+		},
 		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
