@@ -1,5 +1,5 @@
 {
-	"name": "PL_SALES_LOAD_DATAMODEL",
+	"name": "PL_SALESFORCE_LOAD_DATAMODEL",
 	"properties": {
 		"activities": [
 			{
