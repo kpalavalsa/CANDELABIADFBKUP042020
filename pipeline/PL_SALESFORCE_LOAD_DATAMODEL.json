@@ -212,7 +212,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[salesforce].[SP_M_FULL_LOAD_DIMENSIONS]"
+								"storedProcedureName": "[dbo].[test]"
 							},
 							"linkedServiceName": {
 								"referenceName": "AzureSqlDatabase",
@@ -390,7 +390,14 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[test]"
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase",
+								"type": "LinkedServiceReference"
+							}
 						},
 						{
 							"name": "Log5",
