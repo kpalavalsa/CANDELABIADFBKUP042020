@@ -7,10 +7,7 @@
 		},
 		"annotations": [],
 		"type": "SalesforceObject",
-		"schema": [],
-		"typeProperties": {
-			"objectApiName": "WorkAccess"
-		}
+		"schema": []
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
 }
