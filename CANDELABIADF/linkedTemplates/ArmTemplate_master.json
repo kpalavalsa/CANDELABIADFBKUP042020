@@ -47,6 +47,10 @@
 			"type": "string",
 			"defaultValue": "@concat(item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().ADLSPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)"
 		},
+		"AzureKeyVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://CANDELABIKV.vault.azure.net/"
+		},
 		"DataLakeStorage_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://candelabiadls.dfs.core.windows.net"
@@ -105,6 +109,9 @@
 					},
 					"logstore_connectionString": {
 						"value": "[parameters('logstore_connectionString')]"
+					},
+					"AzureKeyVault_properties_typeProperties_baseUrl": {
+						"value": "[parameters('AzureKeyVault_properties_typeProperties_baseUrl')]"
 					},
 					"DataLakeStorage_properties_typeProperties_url": {
 						"value": "[parameters('DataLakeStorage_properties_typeProperties_url')]"

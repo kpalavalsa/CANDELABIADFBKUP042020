@@ -35,6 +35,9 @@
 		"ADLSSTAGE_REM_properties_typeProperties_folderPath": {
 			"value": "@concat(item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().ADLSPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)"
 		},
+		"AzureKeyVault_properties_typeProperties_baseUrl": {
+			"value": "https://CANDELABIKV.vault.azure.net/"
+		},
 		"DataLakeStorage_properties_typeProperties_url": {
 			"value": "https://candelabiadls.dfs.core.windows.net"
 		},
