@@ -1339,21 +1339,21 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[BI].[SP_M_UPDATE_INC_KEY]",
+								"storedProcedureName": "[dbo].[LOAD_DATA_STAGE_TO_ORIGINAL]",
 								"storedProcedureParameters": {
-									"OBJECTSLISTID": {
-										"value": {
-											"value": "@item().OBJECTSLISTID",
-											"type": "Expression"
-										},
-										"type": "Int32"
-									},
-									"VALUE": {
+									"INCVALUE": {
 										"value": {
 											"value": "@item().TimeNow",
 											"type": "Expression"
 										},
 										"type": "String"
+									},
+									"OBJECTLISTID": {
+										"value": {
+											"value": "@item().ObjectListId",
+											"type": "Expression"
+										},
+										"type": "Int32"
 									}
 								}
 							},
