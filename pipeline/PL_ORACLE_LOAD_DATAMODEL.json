@@ -212,7 +212,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[test]"
+								"storedProcedureName": "[ORACLE].[SP_M_FULL_LOAD_DIMENSIONS]"
 							},
 							"linkedServiceName": {
 								"referenceName": "AzureSqlDatabase",
