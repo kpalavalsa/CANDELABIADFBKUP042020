@@ -1165,7 +1165,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "UpdateIncrementalKey",
+									"activity": "LoadStageToOracle",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -1243,7 +1243,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "UpdateIncrementalKey",
+									"activity": "LoadStageToOracle",
 									"dependencyConditions": [
 										"Failed"
 									]
@@ -1320,7 +1320,7 @@
 							}
 						},
 						{
-							"name": "UpdateIncrementalKey",
+							"name": "LoadStageToOracle",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
@@ -1350,7 +1350,7 @@
 									},
 									"OBJECTLISTID": {
 										"value": {
-											"value": "@item().ObjectListId",
+											"value": "@item().OBJECTSLISTID",
 											"type": "Expression"
 										},
 										"type": "Int32"
