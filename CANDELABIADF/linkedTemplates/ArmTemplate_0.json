@@ -1625,7 +1625,7 @@
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
-											"activity": "UpdateIncrementalKey",
+											"activity": "LoadStageToOracle",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1703,7 +1703,7 @@
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
-											"activity": "UpdateIncrementalKey",
+											"activity": "LoadStageToOracle",
 											"dependencyConditions": [
 												"Failed"
 											]
@@ -1726,7 +1726,7 @@
 											},
 											"ErrorInfo": {
 												"value": {
-													"value": "@substring(activity('UpdateIncrementalKey').Error.Message,0,if(greater(length(activity('UpdateIncrementalKey').Error.Message),1990),1990,sub(length(activity('UpdateIncrementalKey').Error.Message),2)))",
+													"value": "@substring(activity('LoadStageToOracle').Error.Message,0,if(greater(length(activity('LoadStageToOracle').Error.Message),1990),1990,sub(length(activity('LoadStageToOracle').Error.Message),2)))",
 													"type": "Expression"
 												},
 												"type": "String"
@@ -1780,7 +1780,7 @@
 									}
 								},
 								{
-									"name": "UpdateIncrementalKey",
+									"name": "LoadStageToOracle",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
@@ -1810,7 +1810,7 @@
 											},
 											"OBJECTLISTID": {
 												"value": {
-													"value": "@item().ObjectListId",
+													"value": "@item().OBJECTSLISTID",
 													"type": "Expression"
 												},
 												"type": "Int32"
