@@ -7682,6 +7682,9 @@
 						}
 					}
 				],
+				"folder": {
+					"name": "Test"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
