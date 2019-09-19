@@ -30,7 +30,7 @@
 					{
 						"activity": "Calling Oracle Pipeline",
 						"dependencyConditions": [
-							"Succeeded"
+							"Completed"
 						]
 					}
 				],
@@ -56,7 +56,7 @@
 					{
 						"activity": "Calling DataModel",
 						"dependencyConditions": [
-							"Succeeded"
+							"Completed"
 						]
 					}
 				],
