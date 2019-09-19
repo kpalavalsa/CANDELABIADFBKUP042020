@@ -1384,7 +1384,7 @@
 											},
 											"Summary": {
 												"value": {
-													"value": "@concat('Updating Incremental Key Value is Failed For Table : ',item().SourceObjectName)",
+													"value": "@concat('Load data from Stage table to Original table is Failed For Table : ',item().SourceObjectName)",
 													"type": "Expression"
 												},
 												"type": "String"
@@ -2794,7 +2794,7 @@
 											},
 											"Summary": {
 												"value": {
-													"value": "@concat('Updating Incremental Key Value is Failed For Table : ',item().SourceObjectName)",
+													"value": "@concat('Loading data from Stage table to Original table is Failed For Table : ',item().SourceObjectName)",
 													"type": "Expression"
 												},
 												"type": "String"
@@ -4892,7 +4892,7 @@
 							{
 								"activity": "Calling Oracle Pipeline",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
@@ -4918,7 +4918,7 @@
 							{
 								"activity": "Calling DataModel",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
@@ -4989,7 +4989,7 @@
 							{
 								"activity": "Calling Oracle Pipeline",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
@@ -5015,7 +5015,7 @@
 							{
 								"activity": "Calling DataModel",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
@@ -7062,7 +7062,7 @@
 							{
 								"activity": "Calling Oracle Pipeline",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
@@ -7088,7 +7088,7 @@
 							{
 								"activity": "Calling DataModel",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
@@ -7159,7 +7159,7 @@
 							{
 								"activity": "Calling Oracle Pipeline",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
@@ -7185,7 +7185,7 @@
 							{
 								"activity": "Calling DataModel",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
