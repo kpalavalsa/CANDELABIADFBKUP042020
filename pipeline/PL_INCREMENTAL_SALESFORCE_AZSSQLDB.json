@@ -1272,7 +1272,7 @@
 									},
 									"ErrorInfo": {
 										"value": {
-											"value": "@substring(activity('UpdateIncrementalKey').Error.Message,0,if(greater(length(activity('UpdateIncrementalKey').Error.Message),1990),1990,sub(length(activity('UpdateIncrementalKey').Error.Message),2)))",
+											"value": "@substring(activity('LoadStageToOriginal').Error.Message,0,if(greater(length(activity('LoadStageToOriginal').Error.Message),1990),1990,sub(length(activity('LoadStageToOriginal').Error.Message),2)))",
 											"type": "Expression"
 										},
 										"type": "String"
