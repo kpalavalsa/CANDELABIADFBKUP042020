@@ -4492,7 +4492,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"storedProcedureName": "[[dbo].[test]"
+										"storedProcedureName": "[[ORACLE].[SP_M_FULL_FACT_SALES_ORDER]"
 									},
 									"linkedServiceName": {
 										"referenceName": "AzureSqlDatabase",
