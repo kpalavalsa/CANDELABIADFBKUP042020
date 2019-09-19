@@ -6,527 +6,12 @@
 			"type": "string",
 			"metadata": "Data Factory Name",
 			"defaultValue": "CANDELABIADF"
-		},
-		"AzureSqlDatabase_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
-		},
-		"DataControlMaster_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'DataControlMaster'"
-		},
-		"DataLakeStorage_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'DataLakeStorage'"
-		},
-		"EmailService_functionKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'functionKey' of 'EmailService'"
-		},
-		"ProcessAAS_functionKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'functionKey' of 'ProcessAAS'"
-		},
-		"Salesforce_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'Salesforce'"
-		},
-		"Salesforce_securityToken": {
-			"type": "secureString",
-			"metadata": "Secure string for 'securityToken' of 'Salesforce'"
-		},
-		"logstore_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'logstore'"
-		},
-		"AzureKeyVault_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://CANDELABIKV.vault.azure.net/"
-		},
-		"DataLakeStorage_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://candelabiadls.dfs.core.windows.net"
-		},
-		"Salesforce_properties_typeProperties_username": {
-			"type": "string",
-			"defaultValue": "azureapi@candelamedical.com"
-		},
-		"ADLSSTAGE_REM_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@concat(item().SourceObjectName,'.txt')"
-		},
-		"ADLSSTAGE_REM_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@concat(item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().ADLSPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureKeyVault')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('AzureKeyVault_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlDatabase_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DataControlMaster')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('DataControlMaster_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DataLakeStorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('DataLakeStorage_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('DataLakeStorage_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EmailService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureFunction",
-				"typeProperties": {
-					"functionAppUrl": "https://candelabiaf.azurewebsites.net",
-					"functionKey": {
-						"type": "SecureString",
-						"value": "[parameters('EmailService_functionKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProcessAAS')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureFunction",
-				"typeProperties": {
-					"functionAppUrl": "https://candelabiaf.azurewebsites.net",
-					"functionKey": {
-						"type": "SecureString",
-						"value": "[parameters('ProcessAAS_functionKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Salesforce')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Salesforce",
-				"typeProperties": {
-					"environmentUrl": "https://candelamedical.my.salesforce.com",
-					"username": "[parameters('Salesforce_properties_typeProperties_username')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('Salesforce_password')]"
-					},
-					"securityToken": {
-						"type": "SecureString",
-						"value": "[parameters('Salesforce_securityToken')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/logstore')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('logstore_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/load_data')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Stored Procedure1",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[dbo].[LOAD_DATA_STAGE_TO_ORIGINAL]",
-							"storedProcedureParameters": {
-								"INCVALUE": {
-									"value": "2019-09-17T20:35:18.81Z",
-									"type": "String"
-								},
-								"OBJECTLISTID": {
-									"value": "31",
-									"type": "Int32"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/load_fact_Ora')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Stored Procedure1",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[ORACLE].[SP_M_FULL_FACT_SALES_ORDER]"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"folder": {
-					"name": "Test"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLSPROCESSED')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLakeStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@concat(item().SourceObjectName,'.txt')",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@concat(item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().ADLSProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
-							"type": "Expression"
-						}
-					},
-					"columnDelimiter": "|",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"nullValue": "\\N",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataLakeStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLSSTAGE_REM')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLakeStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureBlobFSFile",
-				"typeProperties": {
-					"fileName": {
-						"value": "[parameters('ADLSSTAGE_REM_properties_typeProperties_fileName')]",
-						"type": "Expression"
-					},
-					"folderPath": {
-						"value": "[parameters('ADLSSTAGE_REM_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataLakeStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLSStage')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataLakeStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@concat(item().SourceObjectName,'.txt')",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@concat(item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().ADLSPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
-							"type": "Expression"
-						}
-					},
-					"columnDelimiter": "|",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"nullValue": "\\N",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataLakeStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CheckErrors')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ID",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "ProcessName",
-						"type": "varchar"
-					},
-					{
-						"name": "Summary",
-						"type": "varchar"
-					},
-					{
-						"name": "Status",
-						"type": "varchar"
-					},
-					{
-						"name": "ErrorInfo",
-						"type": "nvarchar"
-					},
-					{
-						"name": "RunId",
-						"type": "varchar"
-					},
-					{
-						"name": "LoggedTime",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "RecordsInSource",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "RecordsCopiedToDest",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "SkippedRecordsToMove",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "CopyDuration(Seconds)",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "LOGSPATH",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "BI",
-					"table": "LG_PROCESSLOGS"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DatControlMaster_Source')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DataControlMaster",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"tableName": {
-						"value": "@concat(item().SourceObjectName)",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataControlMaster')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ObjectsList')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"tableName": "[[salesforce].[ACCOUNT]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Salesforce_Source')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Salesforce",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SalesforceObject",
-				"schema": [],
-				"typeProperties": {
-					"objectApiName": "campaign"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Salesforce')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TARGET_SQL')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"tableName": {
-						"value": "@item().TargetObjectName",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PL_INCREMENTAL_ORACLE_AZSQLDB')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -628,8 +113,7 @@
 							},
 							"dataset": {
 								"referenceName": "ObjectsList",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": false
 						}
@@ -852,15 +336,13 @@
 									"inputs": [
 										{
 											"referenceName": "DatControlMaster_Source",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "ADLSStage",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								},
@@ -1090,15 +572,13 @@
 									"inputs": [
 										{
 											"referenceName": "ADLSStage",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "TARGET_SQL",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								},
@@ -1333,15 +813,13 @@
 									"inputs": [
 										{
 											"referenceName": "ADLSStage",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "ADLSPROCESSED",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								},
@@ -1538,8 +1016,7 @@
 									"typeProperties": {
 										"dataset": {
 											"referenceName": "ADLSSTAGE_REM",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										},
 										"enableLogging": false,
 										"recursive": true
@@ -1925,16 +1402,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
-				"[concat(variables('factoryId'), '/datasets/ObjectsList')]",
-				"[concat(variables('factoryId'), '/datasets/DatControlMaster_Source')]",
-				"[concat(variables('factoryId'), '/datasets/ADLSStage')]",
-				"[concat(variables('factoryId'), '/datasets/TARGET_SQL')]",
-				"[concat(variables('factoryId'), '/datasets/ADLSPROCESSED')]",
-				"[concat(variables('factoryId'), '/datasets/ADLSSTAGE_REM')]",
-				"[concat(variables('factoryId'), '/linkedServices/logstore')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PL_INCREMENTAL_SALESFORCE_AZSSQLDB')]",
@@ -2037,8 +1505,7 @@
 							},
 							"dataset": {
 								"referenceName": "ObjectsList",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": false
 						}
@@ -2262,15 +1729,13 @@
 									"inputs": [
 										{
 											"referenceName": "Salesforce_Source",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "ADLSStage",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								},
@@ -2500,15 +1965,13 @@
 									"inputs": [
 										{
 											"referenceName": "ADLSStage",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "TARGET_SQL",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								},
@@ -2743,15 +2206,13 @@
 									"inputs": [
 										{
 											"referenceName": "ADLSStage",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "ADLSPROCESSED",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								},
@@ -2948,8 +2409,7 @@
 									"typeProperties": {
 										"dataset": {
 											"referenceName": "ADLSSTAGE_REM",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										},
 										"enableLogging": false,
 										"recursive": true
@@ -3335,16 +2795,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
-				"[concat(variables('factoryId'), '/datasets/ObjectsList')]",
-				"[concat(variables('factoryId'), '/datasets/Salesforce_Source')]",
-				"[concat(variables('factoryId'), '/datasets/ADLSStage')]",
-				"[concat(variables('factoryId'), '/datasets/TARGET_SQL')]",
-				"[concat(variables('factoryId'), '/datasets/ADLSPROCESSED')]",
-				"[concat(variables('factoryId'), '/datasets/ADLSSTAGE_REM')]",
-				"[concat(variables('factoryId'), '/linkedServices/logstore')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
