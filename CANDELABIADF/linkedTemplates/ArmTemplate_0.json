@@ -190,49 +190,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/load_data')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Stored Procedure1",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[dbo].[LOAD_DATA_STAGE_TO_ORIGINAL]",
-							"storedProcedureParameters": {
-								"INCVALUE": {
-									"value": "2019-09-17T20:35:18.81Z",
-									"type": "String"
-								},
-								"OBJECTLISTID": {
-									"value": "31",
-									"type": "Int32"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/load_fact_Ora')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -353,7 +310,7 @@
 						}
 					},
 					"columnDelimiter": "|",
-					"escapeChar": "\\",
+					"escapeChar": "/",
 					"firstRowAsHeader": true,
 					"nullValue": "\\N",
 					"quoteChar": "\""
@@ -525,6 +482,736 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataControlMaster",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "HEADER_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ORG_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ORDER_TYPE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ORDER_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VERSION_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EXPIRATION_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ORDER_SOURCE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SOURCE_DOCUMENT_TYPE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ORIG_SYS_DOCUMENT_REF",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SOURCE_DOCUMENT_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ORDERED_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "REQUEST_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PRICING_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SHIPMENT_PRIORITY_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DEMAND_CLASS_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PRICE_LIST_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TAX_EXEMPT_FLAG",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TAX_EXEMPT_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TAX_EXEMPT_REASON_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONVERSION_RATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONVERSION_TYPE_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONVERSION_RATE_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PARTIAL_SHIPMENTS_ALLOWED",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SHIP_TOLERANCE_ABOVE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SHIP_TOLERANCE_BELOW",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TRANSACTIONAL_CURR_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AGREEMENT_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TAX_POINT_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CUST_PO_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "INVOICING_RULE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ACCOUNTING_RULE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PAYMENT_TERM_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SHIPPING_METHOD_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FREIGHT_CARRIER_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FOB_POINT_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FREIGHT_TERMS_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SOLD_FROM_ORG_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SOLD_TO_ORG_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SHIP_FROM_ORG_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SHIP_TO_ORG_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "INVOICE_TO_ORG_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DELIVER_TO_ORG_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SOLD_TO_CONTACT_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SHIP_TO_CONTACT_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "INVOICE_TO_CONTACT_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DELIVER_TO_CONTACT_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREATION_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREATED_BY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_UPDATED_BY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_UPDATE_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_UPDATE_LOGIN",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PROGRAM_APPLICATION_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PROGRAM_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PROGRAM_UPDATE_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "REQUEST_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONTEXT",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE3",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE4",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE5",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE6",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE7",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE8",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE9",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE10",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE11",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE12",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE13",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE14",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE15",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE_CATEGORY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE3",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE4",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE5",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE6",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE7",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE8",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE9",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE10",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE11",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE12",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE13",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE14",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE15",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE16",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE17",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE18",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE19",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GLOBAL_ATTRIBUTE20",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CANCELLED_FLAG",
+						"type": "nvarchar"
+					},
+					{
+						"name": "OPEN_FLAG",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BOOKED_FLAG",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SALESREP_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "RETURN_REASON_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ORDER_DATE_TYPE_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EARLIEST_SCHEDULE_LIMIT",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LATEST_SCHEDULE_LIMIT",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PAYMENT_TYPE_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PAYMENT_AMOUNT",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CHECK_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREDIT_CARD_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREDIT_CARD_HOLDER_NAME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREDIT_CARD_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREDIT_CARD_EXPIRATION_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREDIT_CARD_APPROVAL_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SALES_CHANNEL_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FIRST_ACK_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FIRST_ACK_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_ACK_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_ACK_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ORDER_CATEGORY_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CHANGE_SEQUENCE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DROP_SHIP_FLAG",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CUSTOMER_PAYMENT_TERM_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SHIPPING_INSTRUCTIONS",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PACKING_INSTRUCTIONS",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_CONTEXT",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE3",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE4",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE5",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE6",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE7",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE8",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE9",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE10",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE11",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE12",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE13",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE14",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TP_ATTRIBUTE15",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FLOW_STATUS_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MARKETING_SOURCE_CODE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREDIT_CARD_APPROVAL_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "UPGRADED_FLAG",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CUSTOMER_PREFERENCE_SET_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BOOKED_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LOCK_CONTROL",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PRICE_REQUEST_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE16",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE17",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE18",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE19",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE20",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BATCH_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "XML_MESSAGE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ACCOUNTING_RULE_DURATION",
+						"type": "nvarchar"
+					},
+					{
+						"name": "BLANKET_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SALES_DOCUMENT_TYPE_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SOLD_TO_PHONE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FULFILLMENT_SET_NAME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LINE_SET_NAME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DEFAULT_FULFILLMENT_SET",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ORDER_FIRMED_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TRANSACTION_PHASE_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SALES_DOCUMENT_NAME",
+						"type": "nvarchar"
+					},
+					{
+						"name": "QUOTE_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "QUOTE_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "USER_STATUS_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DRAFT_SUBMITTED_FLAG",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SOURCE_DOCUMENT_VERSION_NUMBER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SOLD_TO_SITE_USE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SUPPLIER_SIGNATURE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SUPPLIER_SIGNATURE_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CUSTOMER_SIGNATURE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CUSTOMER_SIGNATURE_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MINISITE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "END_CUSTOMER_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "END_CUSTOMER_CONTACT_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "END_CUSTOMER_SITE_USE_ID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "IB_OWNER",
+						"type": "nvarchar"
+					},
+					{
+						"name": "IB_CURRENT_LOCATION",
+						"type": "nvarchar"
+					},
+					{
+						"name": "IB_INSTALLED_AT_LOCATION",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "OE_ORDER_HEADERS_ALL"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DataControlMaster')]"
 			]
 		},
 		{
@@ -806,7 +1493,7 @@
 							},
 							"activities": [
 								{
-									"name": "SalesforceToBlob",
+									"name": "OracleToBlob",
 									"type": "Copy",
 									"dependsOn": [],
 									"policy": {
@@ -869,7 +1556,7 @@
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
-											"activity": "SalesforceToBlob",
+											"activity": "OracleToBlob",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -888,7 +1575,7 @@
 										"storedProcedureParameters": {
 											"CopyDuration": {
 												"value": {
-													"value": "@activity('SalesforceToBlob').output.copyDuration",
+													"value": "@activity('OracleToBlob').output.copyDuration",
 													"type": "Expression"
 												},
 												"type": "Int64"
@@ -906,14 +1593,14 @@
 											},
 											"RecordsCopiedToDest": {
 												"value": {
-													"value": "@activity('SalesforceToBlob').output.rowsCopied",
+													"value": "@activity('OracleToBlob').output.rowsCopied",
 													"type": "Expression"
 												},
 												"type": "Int64"
 											},
 											"RecordsInSource": {
 												"value": {
-													"value": "@activity('SalesforceToBlob').output.rowsRead",
+													"value": "@activity('OracleToBlob').output.rowsRead",
 													"type": "Expression"
 												},
 												"type": "Int64"
@@ -927,7 +1614,7 @@
 											},
 											"SkippedRecordsToMove": {
 												"value": {
-													"value": "@activity('SalesforceToBlob').output.rowsSkipped",
+													"value": "@activity('OracleToBlob').output.rowsSkipped",
 													"type": "Expression"
 												},
 												"type": "Int64"
@@ -959,7 +1646,7 @@
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
-											"activity": "SalesforceToBlob",
+											"activity": "OracleToBlob",
 											"dependencyConditions": [
 												"Failed"
 											]
@@ -982,7 +1669,7 @@
 											},
 											"ErrorInfo": {
 												"value": {
-													"value": "@substring(activity('SalesforceToBlob').Error.Message,0,if(greater(length(activity('SalesforceToBlob').Error.Message),1990),1990,sub(length(activity('SalesforceToBlob').Error.Message),2)))",
+													"value": "@substring(activity('OracleToBlob').Error.Message,0,if(greater(length(activity('OracleToBlob').Error.Message),1990),1990,sub(length(activity('OracleToBlob').Error.Message),2)))",
 													"type": "Expression"
 												},
 												"type": "String"
