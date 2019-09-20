@@ -274,7 +274,7 @@
 					},
 					"activities": [
 						{
-							"name": "SalesforceToBlob",
+							"name": "OracleToBlob",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -335,7 +335,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "SalesforceToBlob",
+									"activity": "OracleToBlob",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -354,7 +354,7 @@
 								"storedProcedureParameters": {
 									"CopyDuration": {
 										"value": {
-											"value": "@activity('SalesforceToBlob').output.copyDuration",
+											"value": "@activity('OracleToBlob').output.copyDuration",
 											"type": "Expression"
 										},
 										"type": "Int64"
@@ -372,14 +372,14 @@
 									},
 									"RecordsCopiedToDest": {
 										"value": {
-											"value": "@activity('SalesforceToBlob').output.rowsCopied",
+											"value": "@activity('OracleToBlob').output.rowsCopied",
 											"type": "Expression"
 										},
 										"type": "Int64"
 									},
 									"RecordsInSource": {
 										"value": {
-											"value": "@activity('SalesforceToBlob').output.rowsRead",
+											"value": "@activity('OracleToBlob').output.rowsRead",
 											"type": "Expression"
 										},
 										"type": "Int64"
@@ -393,7 +393,7 @@
 									},
 									"SkippedRecordsToMove": {
 										"value": {
-											"value": "@activity('SalesforceToBlob').output.rowsSkipped",
+											"value": "@activity('OracleToBlob').output.rowsSkipped",
 											"type": "Expression"
 										},
 										"type": "Int64"
@@ -425,7 +425,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "SalesforceToBlob",
+									"activity": "OracleToBlob",
 									"dependencyConditions": [
 										"Failed"
 									]
@@ -448,7 +448,7 @@
 									},
 									"ErrorInfo": {
 										"value": {
-											"value": "@substring(activity('SalesforceToBlob').Error.Message,0,if(greater(length(activity('SalesforceToBlob').Error.Message),1990),1990,sub(length(activity('SalesforceToBlob').Error.Message),2)))",
+											"value": "@substring(activity('OracleToBlob').Error.Message,0,if(greater(length(activity('OracleToBlob').Error.Message),1990),1990,sub(length(activity('OracleToBlob').Error.Message),2)))",
 											"type": "Expression"
 										},
 										"type": "String"
