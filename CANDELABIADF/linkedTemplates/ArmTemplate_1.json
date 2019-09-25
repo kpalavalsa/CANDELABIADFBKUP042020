@@ -13,7 +13,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_ORACLE_AZSQLDB')]",
+			"name": "[concat(parameters('factoryName'), '/PL_ORACLE_AZSQLDB_FULL')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -109,7 +109,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, blobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Oracle' and IsActive = 1 "
+								"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, blobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Oracle' and IsActive = 1 and LoadType='FULL'"
 							},
 							"dataset": {
 								"referenceName": "ObjectsList",
@@ -1975,7 +1975,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_SALESFORCE_AZSQLDB')]",
+			"name": "[concat(parameters('factoryName'), '/PL_SALESFORCE_AZSQLDB_FULL')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2071,7 +2071,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, BlobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Salesforce' and IsActive = 1 "
+								"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, BlobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Salesforce' and IsActive = 1 and LoadType='FULL'"
 							},
 							"dataset": {
 								"referenceName": "ObjectsList",
@@ -4002,7 +4002,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "PL_ORACLE_AZSQLDB",
+								"referenceName": "PL_ORACLE_AZSQLDB_FULL",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -4080,7 +4080,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_ORACLE_AZSQLDB')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_ORACLE_AZSQLDB_FULL')]",
 				"[concat(variables('factoryId'), '/pipelines/PL_ORACLE_LOAD_DATAMODEL')]"
 			]
 		},
@@ -4193,7 +4193,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "PL_SALESFORCE_AZSQLDB",
+								"referenceName": "PL_SALESFORCE_AZSQLDB_FULL",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -4271,7 +4271,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_AZSQLDB')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_AZSQLDB_FULL')]",
 				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_LOAD_DATAMODEL')]"
 			]
 		},
