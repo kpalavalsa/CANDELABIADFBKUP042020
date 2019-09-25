@@ -10,7 +10,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_SALESFORCE_AZSQLDB",
+						"referenceName": "PL_SALESFORCE_AZSQLDB_FULL",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
