@@ -1,5 +1,5 @@
 {
-	"name": "PL_ORACLE_AZSQLDB_FULL",
+	"name": "PL_FULL_ORACLE_AZSQLDB",
 	"properties": {
 		"description": "For Saleforce schema",
 		"activities": [
