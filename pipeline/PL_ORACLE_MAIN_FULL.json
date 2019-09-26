@@ -10,7 +10,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_ORACLE_AZSQLDB_FULL",
+						"referenceName": "PL_FULL_ORACLE_AZSQLDB",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
