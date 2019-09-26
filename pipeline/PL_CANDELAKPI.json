@@ -10,10 +10,17 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_ORACLE_MAIN_FULL",
+						"referenceName": "PL_FULL_ORACLE_AZSQLDB",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"LoadType": "Full"
+					}
 				}
 			},
 			{
@@ -23,10 +30,17 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_ORACLE_MAIN_INCREMENTAL",
+						"referenceName": "PL_INCREMENTAL_ORACLE_AZSQLDB",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"LoadType": "Incremental"
+					}
 				}
 			},
 			{
@@ -36,10 +50,17 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_SALESFORCE_MAIN_FULL",
+						"referenceName": "PL_SALESFORCE_AZSQLDB_FULL",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"LoadType": "Full"
+					}
 				}
 			},
 			{
@@ -49,10 +70,17 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_SALESFORCE_MAIN_INCREMENTAL",
+						"referenceName": "PL_INCREMENTAL_SALESFORCE_AZSSQLDB",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"LoadType": "Incremental"
+					}
 				}
 			},
 			{
@@ -117,6 +145,227 @@
 							"type": "Expression"
 						}
 					}
+				}
+			},
+			{
+				"name": "ProcessAAS",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "SalesForce_DataModel",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "Oracle_DataModel",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": {
+						"value": "@concat('PROCESSAAS?modelname=','CANDELAKPI&ProcessName=',pipeline().Pipeline,'&RunId=',pipeline().RunId)",
+						"type": "Expression"
+					},
+					"method": "GET"
+				},
+				"linkedServiceName": {
+					"referenceName": "ProcessAAS",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Log31",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "ProcessAAS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[BI].[SP_M_Logger]",
+					"storedProcedureParameters": {
+						"CopyDuration": {
+							"value": null,
+							"type": "Int64"
+						},
+						"ErrorInfo": {
+							"value": null,
+							"type": "String"
+						},
+						"LOGSPATH": {
+							"value": null,
+							"type": "String"
+						},
+						"ProcessName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"RecordsCopiedToDest": {
+							"value": null,
+							"type": "Int64"
+						},
+						"RecordsInSource": {
+							"value": null,
+							"type": "Int64"
+						},
+						"RunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"SkippedRecordsToMove": {
+							"value": null,
+							"type": "Int64"
+						},
+						"Status": {
+							"value": "INFO",
+							"type": "String"
+						},
+						"Summary": {
+							"value": "Processing AAS Model is completed successfully",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Log32",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "ProcessAAS",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[BI].[SP_M_Logger]",
+					"storedProcedureParameters": {
+						"CopyDuration": {
+							"value": null,
+							"type": "Int64"
+						},
+						"ErrorInfo": {
+							"value": {
+								"value": "@substring(activity('ProcessAAS').Error.Message,0,if(greater(length(activity('ProcessAAS').Error.Message),1990),1990,sub(length(activity('ProcessAAS').Error.Message),2)))",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"LOGSPATH": {
+							"value": null,
+							"type": "String"
+						},
+						"ProcessName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"RecordsCopiedToDest": {
+							"value": null,
+							"type": "Int64"
+						},
+						"RecordsInSource": {
+							"value": null,
+							"type": "Int64"
+						},
+						"RunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"SkippedRecordsToMove": {
+							"value": null,
+							"type": "Int64"
+						},
+						"Status": {
+							"value": "ERROR",
+							"type": "String"
+						},
+						"Summary": {
+							"value": "Failed to Process AAS Model",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "EmailNotification",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "ProcessAAS",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": {
+						"value": "@concat('SendEmail?RunId=',pipeline().RunId,'&ProcessName=',pipeline().Pipeline)",
+						"type": "Expression"
+					},
+					"method": "GET"
+				},
+				"linkedServiceName": {
+					"referenceName": "EmailService",
+					"type": "LinkedServiceReference"
 				}
 			}
 		],
