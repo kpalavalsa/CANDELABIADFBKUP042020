@@ -1,0 +1,125 @@
+{
+	"name": "PL_CANDELAKPI",
+	"properties": {
+		"description": "Combination of Oracle and Salesforce data load",
+		"activities": [
+			{
+				"name": "Oracle_Full_Load",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_ORACLE_MAIN_FULL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Oracle_Incremental_Load",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_ORACLE_MAIN_INCREMENTAL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Salesforce_Full_Load",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_SALESFORCE_MAIN_FULL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Salesforce_Incremental_Load",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_SALESFORCE_MAIN_INCREMENTAL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "SalesForce_DataModel",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Salesforce_Incremental_Load",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "Salesforce_Full_Load",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_SALESFORCE_LOAD_DATAMODEL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Oracle_DataModel",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Oracle_Incremental_Load",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "Oracle_Full_Load",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_ORACLE_LOAD_DATAMODEL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}
