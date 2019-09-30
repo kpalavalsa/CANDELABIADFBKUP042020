@@ -4,7 +4,7 @@
 	"parameters": {
 		"factoryName": {
 			"type": "string",
-			"metadata": "Data Factory Name",
+			"metadata": "Data Factory name",
 			"defaultValue": "CANDELABIADF"
 		},
 		"AzureSqlDatabase_connectionString": {
@@ -64,6 +64,1607 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_CANDELAKPI')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Combination of Oracle and Salesforce data load",
+				"activities": [
+					{
+						"name": "Oracle_Full_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_FULL_ORACLE_AZSQLDB",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Full"
+							}
+						}
+					},
+					{
+						"name": "Oracle_Incremental_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_INCREMENTAL_ORACLE_AZSQLDB",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Incremental"
+							}
+						}
+					},
+					{
+						"name": "Salesforce_Full_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_SALESFORCE_AZSQLDB_FULL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Full"
+							}
+						}
+					},
+					{
+						"name": "Salesforce_Incremental_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_INCREMENTAL_SALESFORCE_AZSSQLDB",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Incremental"
+							}
+						}
+					},
+					{
+						"name": "SalesForce_DataModel",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Salesforce_Incremental_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "Salesforce_Full_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_SALESFORCE_LOAD_DATAMODEL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Oracle_DataModel",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Oracle_Incremental_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "Oracle_Full_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_ORACLE_LOAD_DATAMODEL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "ProcessAAS",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [
+							{
+								"activity": "SalesForce_DataModel",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "Oracle_DataModel",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": {
+								"value": "@concat('PROCESSAAS?modelname=','CANDELAKPI&ProcessName=',pipeline().Pipeline,'&RunId=',pipeline().RunId)",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {}
+						},
+						"linkedServiceName": {
+							"referenceName": "ProcessAAS",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Log31",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[BI].[SP_M_Logger]",
+							"storedProcedureParameters": {
+								"CopyDuration": {
+									"value": null,
+									"type": "Int64"
+								},
+								"ErrorInfo": {
+									"value": null,
+									"type": "String"
+								},
+								"LOGSPATH": {
+									"value": null,
+									"type": "String"
+								},
+								"ProcessName": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RecordsCopiedToDest": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RecordsInSource": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RunId": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SkippedRecordsToMove": {
+									"value": null,
+									"type": "Int64"
+								},
+								"Status": {
+									"value": "INFO",
+									"type": "String"
+								},
+								"Summary": {
+									"value": "Processing AAS Model is completed successfully",
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Log32",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[BI].[SP_M_Logger]",
+							"storedProcedureParameters": {
+								"CopyDuration": {
+									"value": null,
+									"type": "Int64"
+								},
+								"ErrorInfo": {
+									"value": {
+										"value": "@substring(activity('ProcessAAS').Error.Message,0,if(greater(length(activity('ProcessAAS').Error.Message),1990),1990,sub(length(activity('ProcessAAS').Error.Message),2)))",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"LOGSPATH": {
+									"value": null,
+									"type": "String"
+								},
+								"ProcessName": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RecordsCopiedToDest": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RecordsInSource": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RunId": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SkippedRecordsToMove": {
+									"value": null,
+									"type": "Int64"
+								},
+								"Status": {
+									"value": "ERROR",
+									"type": "String"
+								},
+								"Summary": {
+									"value": "Failed to Process AAS Model",
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "EmailNotification",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": {
+								"value": "@concat('SendEmail?RunId=',pipeline().RunId,'&ProcessName=',pipeline().Pipeline)",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {}
+						},
+						"linkedServiceName": {
+							"referenceName": "EmailService",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PL_FULL_ORACLE_AZSQLDB')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_INCREMENTAL_ORACLE_AZSQLDB')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_AZSQLDB_FULL')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_INCREMENTAL_SALESFORCE_AZSSQLDB')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_LOAD_DATAMODEL')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_ORACLE_LOAD_DATAMODEL')]",
+				"[concat(variables('factoryId'), '/linkedServices/ProcessAAS')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
+				"[concat(variables('factoryId'), '/linkedServices/EmailService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_FULL_ORACLE_AZSQLDB')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "For Saleforce schema",
+				"activities": [
+					{
+						"name": "Log1",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[BI].[SP_M_Logger]",
+							"storedProcedureParameters": {
+								"CopyDuration": {
+									"value": null,
+									"type": "Int64"
+								},
+								"ErrorInfo": {
+									"value": null,
+									"type": "String"
+								},
+								"ProcessName": {
+									"value": {
+										"value": "@pipeline().Pipeline ",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RecordsCopiedToDest": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RecordsInSource": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RunId": {
+									"value": {
+										"value": "@pipeline().parameters.RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SkippedRecordsToMove": {
+									"value": null,
+									"type": "Int64"
+								},
+								"Status": {
+									"value": "INFO",
+									"type": "String"
+								},
+								"Summary": {
+									"value": "Process is Started",
+									"type": "String"
+								},
+								"LOGSPATH": {
+									"value": null,
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "FetchTables",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Log1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, blobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Oracle' and IsActive = 1 and LoadType='FULL'"
+							},
+							"dataset": {
+								"referenceName": "ObjectsList",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "Log2",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "FetchTables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[BI].[SP_M_Logger]",
+							"storedProcedureParameters": {
+								"CopyDuration": {
+									"value": null,
+									"type": "Int64"
+								},
+								"ErrorInfo": {
+									"value": null,
+									"type": "String"
+								},
+								"ProcessName": {
+									"value": {
+										"value": "@pipeline().Pipeline ",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RecordsCopiedToDest": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RecordsInSource": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RunId": {
+									"value": {
+										"value": "@pipeline().parameters.RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SkippedRecordsToMove": {
+									"value": null,
+									"type": "Int64"
+								},
+								"Status": {
+									"value": "INFO",
+									"type": "String"
+								},
+								"Summary": {
+									"value": "Tables to Process are listed",
+									"type": "String"
+								},
+								"LOGSPATH": {
+									"value": null,
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Log3",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "FetchTables",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[BI].[SP_M_Logger]",
+							"storedProcedureParameters": {
+								"CopyDuration": {
+									"value": null,
+									"type": "Int64"
+								},
+								"ErrorInfo": {
+									"value": {
+										"value": "@substring(activity('FetchTables').Error.Message,0,if(greater(length(activity('FetchTables').Error.Message),1990),1990,sub(length(activity('FetchTables').Error.Message),2)))",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"ProcessName": {
+									"value": {
+										"value": "@pipeline().Pipeline ",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RecordsCopiedToDest": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RecordsInSource": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RunId": {
+									"value": {
+										"value": "@pipeline().parameters.RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SkippedRecordsToMove": {
+									"value": null,
+									"type": "Int64"
+								},
+								"Status": {
+									"value": "ERROR",
+									"type": "String"
+								},
+								"Summary": {
+									"value": "Listing Tables To Process is Failed",
+									"type": "String"
+								},
+								"LOGSPATH": {
+									"value": null,
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "ForEveryActiveObject",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Log2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('FetchTables').Output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "OracleToBlob",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('SELECT ',item().CHECKSUMCOLUMNS,' FROM ',item().SourceObjectName)",
+												"type": "Expression"
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"enableSkipIncompatibleRow": true,
+										"redirectIncompatibleRowSettings": {
+											"linkedServiceName": {
+												"referenceName": "logstore",
+												"type": "LinkedServiceReference"
+											},
+											"path": {
+												"value": "@concat('candelabiadf','/',item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().BlobLogsPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
+												"type": "Expression"
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DatControlMaster_Source",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ADLSStage",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								},
+								{
+									"name": "Log4",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "OracleToBlob",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": {
+													"value": "@activity('OracleToBlob').output.copyDuration",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline ",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": {
+													"value": "@activity('OracleToBlob').output.rowsCopied",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": {
+													"value": "@activity('OracleToBlob').output.rowsRead",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": {
+													"value": "@activity('OracleToBlob').output.rowsSkipped",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "INFO",
+												"type": "String"
+											},
+											"Summary": {
+												"value": {
+													"value": "@concat('Copied Data To Blob Storage For Table : ',item().SourceObjectName)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Log5",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "OracleToBlob",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": {
+													"value": "@substring(activity('OracleToBlob').Error.Message,0,if(greater(length(activity('OracleToBlob').Error.Message),1990),1990,sub(length(activity('OracleToBlob').Error.Message),2)))",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline ",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "ERROR",
+												"type": "String"
+											},
+											"Summary": {
+												"value": {
+													"value": "@concat('Copying Data To Blob Storage is Failed For Table : ',item().SourceObjectName)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "ADLSToSQL",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Log4",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBatchSize": 10000,
+											"preCopyScript": {
+												"value": "@{concat('TRUNCATE TABLE ',item().TargetObjectName)} ",
+												"type": "Expression"
+											}
+										},
+										"enableStaging": false,
+										"enableSkipIncompatibleRow": true,
+										"redirectIncompatibleRowSettings": {
+											"linkedServiceName": {
+												"referenceName": "logstore",
+												"type": "LinkedServiceReference"
+											},
+											"path": {
+												"value": "@concat('candelabiadf','/',item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().BlobLogsPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
+												"type": "Expression"
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ADLSStage",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "TARGET_SQL",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								},
+								{
+									"name": "Log6",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "ADLSToSQL",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": {
+													"value": "@activity('ADLSToSQL').output.copyDuration",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline ",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": {
+													"value": "@activity('ADLSToSQL').output.rowsCopied",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": {
+													"value": "@activity('ADLSToSQL').output.rowsRead",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": {
+													"value": "@activity('ADLSToSQL').output.rowsSkipped",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "INFO",
+												"type": "String"
+											},
+											"Summary": {
+												"value": {
+													"value": "@concat('Copied Data From Blob Storage To SQL For Table : ',item().SourceObjectName)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": {
+													"value": "@if(equals(activity('ADLSToSQL').output.rowsCopied,0),'NA',activity('ADLSToSQL').output.redirectRowPath)",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Log7",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "ADLSToSQL",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": {
+													"value": "@substring(activity('ADLSToSQL').Error.Message,0,if(greater(length(activity('ADLSToSQL').Error.Message),1990),1990,sub(length(activity('ADLSToSQL').Error.Message),2)))",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline ",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "ERROR",
+												"type": "String"
+											},
+											"Summary": {
+												"value": {
+													"value": "@concat('Copying Data From Blob Storage To SQL is Failed For Table : ',item().SourceObjectName)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "MoveFileToProcessedFolder",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Log6",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"enableSkipIncompatibleRow": true,
+										"redirectIncompatibleRowSettings": {
+											"linkedServiceName": {
+												"referenceName": "logstore",
+												"type": "LinkedServiceReference"
+											},
+											"path": {
+												"value": "@concat('candelabiadf','/',item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().BlobLogsPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
+												"type": "Expression"
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ADLSStage",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ADLSPROCESSED",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								},
+								{
+									"name": "Log9",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "MoveFileToProcessedFolder",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": {
+													"value": "@activity('MoveFileToProcessedFolder').output.copyDuration",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline ",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": {
+													"value": "@activity('MoveFileToProcessedFolder').output.filesWritten",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": {
+													"value": "@activity('MoveFileToProcessedFolder').output.filesRead",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": {
+													"value": "@activity('MoveFileToProcessedFolder').output.rowsSkipped",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "INFO",
+												"type": "String"
+											},
+											"Summary": {
+												"value": {
+													"value": "@concat('Copied File From PreProcessed Folder to Processed Folder For Table : ',item().SourceObjectName)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Log10",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "MoveFileToProcessedFolder",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": {
+													"value": "@substring(activity('MoveFileToProcessedFolder').Error.Message,0,if(greater(length(activity('MoveFileToProcessedFolder').Error.Message),1990),1990,sub(length(activity('MoveFileToProcessedFolder').Error.Message),2)))",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline ",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "ERROR",
+												"type": "String"
+											},
+											"Summary": {
+												"value": {
+													"value": "@concat('Copying File From PreProcessed To Processed Folder is Failed For Table : ',item().SourceObjectName)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "DeleteFileFromPreProcessedPath",
+									"type": "Delete",
+									"dependsOn": [
+										{
+											"activity": "Log9",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "ADLSSTAGE_REM",
+											"type": "DatasetReference",
+											"parameters": {}
+										},
+										"enableLogging": false,
+										"recursive": true
+									}
+								},
+								{
+									"name": "Log11",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "DeleteFileFromPreProcessedPath",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline ",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "INFO",
+												"type": "String"
+											},
+											"Summary": {
+												"value": {
+													"value": "@concat('File is deleted from PreProcessed Folder For Table : ',item().SourceObjectName)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Log12",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "DeleteFileFromPreProcessedPath",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": {
+													"value": "@substring(activity('DeleteFileFromPreProcessedPath').Error.Message,0,if(greater(length(activity('DeleteFileFromPreProcessedPath').Error.Message),1990),1990,sub(length(activity('DeleteFileFromPreProcessedPath').Error.Message),2)))",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline ",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "ERROR",
+												"type": "String"
+											},
+											"Summary": {
+												"value": {
+													"value": "@concat('Deleting file from PreProcessed Folder is Failed For Table : ',item().SourceObjectName)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"RunId": {
+						"type": "string",
+						"defaultValue": "-1"
+					},
+					"LoadType": {
+						"type": "string",
+						"defaultValue": "Full"
+					}
+				},
+				"variables": {
+					"t1": {
+						"type": "String",
+						"defaultValue": "test"
+					}
+				},
+				"folder": {
+					"name": "Oracle"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
+				"[concat(variables('factoryId'), '/datasets/ObjectsList')]",
+				"[concat(variables('factoryId'), '/datasets/DatControlMaster_Source')]",
+				"[concat(variables('factoryId'), '/datasets/ADLSStage')]",
+				"[concat(variables('factoryId'), '/datasets/TARGET_SQL')]",
+				"[concat(variables('factoryId'), '/datasets/ADLSPROCESSED')]",
+				"[concat(variables('factoryId'), '/datasets/ADLSSTAGE_REM')]",
+				"[concat(variables('factoryId'), '/linkedServices/logstore')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PL_INCREMENTAL_ORACLE_AZSQLDB')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -1570,7 +3171,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "declare @Today datetime=getutcdate()\nselect INC.IncKeyName,INC.IncValue,SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'_STAGE].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, BlobLogsPath,convert(varchar,@Today,112)+'/'+replace(convert(varchar, @Today, 8),':','') as Today,CHECKSUMCOLUMNS \n,case when INC.INCVALUE is null then '' else 'Where '+  INC.INCKEYNAME+' >= '''+ cast(INC.INCVALUE as NVARCHAR(50)) + ''' AND ' + INC.INCKEYNAME + ' < ''' + cast(@Today as NVARCHAR(50)) + '''' END AS WhereCondition \n,@Today AS TimeNow,INC.OBJECTSLISTID,OL.ContainerName\nFrom bi.MM_ObjectsList  OL\nINNER join bi.MM_INCREMENTALKEYS INC on INC.objectslistid=OL.ID and INC.type='UPD' and INC.ISACTIVE=1\nwhere OL.SourceServer='Salesforce' and OL.IsActive = 1 and OL.LOADTYPE='INCREMENTAL'"
+								"sqlReaderQuery": "\ndeclare @Today datetime=getutcdate()\nselect INC.IncKeyName,INC.IncValue,SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'_STAGE].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, BlobLogsPath,convert(varchar,@Today,112)+'/'+replace(convert(varchar, @Today, 8),':','') as Today,CHECKSUMCOLUMNS \n,case when INC.INCVALUE is null then '' else 'Where '+  INC.INCKEYNAME+' >= '+ concat(substring(replace(convert(varchar,INC.INCVALUE,121),' ','T'),1,19),'Z') + ' AND ' + INC.INCKEYNAME + ' < ' + concat(substring(replace(convert(varchar,@Today,121),' ','T'),1,19),'Z') + '' END AS WhereCondition \n,@Today AS TimeNow,INC.OBJECTSLISTID,OL.ContainerName\nFrom bi.MM_ObjectsList  OL\nINNER join bi.MM_INCREMENTALKEYS INC on INC.objectslistid=OL.ID and INC.type='UPD' and INC.ISACTIVE=1\nwhere OL.SourceServer='Salesforce' and OL.IsActive = 1 and OL.LOADTYPE='INCREMENTAL'"
 							},
 							"dataset": {
 								"referenceName": "ObjectsList",
@@ -2876,1218 +4477,6 @@
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
 				"[concat(variables('factoryId'), '/datasets/ObjectsList')]",
 				"[concat(variables('factoryId'), '/datasets/Salesforce_Source')]",
-				"[concat(variables('factoryId'), '/datasets/ADLSStage')]",
-				"[concat(variables('factoryId'), '/datasets/TARGET_SQL')]",
-				"[concat(variables('factoryId'), '/datasets/ADLSPROCESSED')]",
-				"[concat(variables('factoryId'), '/datasets/ADLSSTAGE_REM')]",
-				"[concat(variables('factoryId'), '/linkedServices/logstore')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PL_FULL_ORACLE_AZSQLDB')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "For Saleforce schema",
-				"activities": [
-					{
-						"name": "Log1",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[BI].[SP_M_Logger]",
-							"storedProcedureParameters": {
-								"CopyDuration": {
-									"value": null,
-									"type": "Int64"
-								},
-								"ErrorInfo": {
-									"value": null,
-									"type": "String"
-								},
-								"ProcessName": {
-									"value": {
-										"value": "@pipeline().Pipeline ",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"RecordsCopiedToDest": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RecordsInSource": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RunId": {
-									"value": {
-										"value": "@pipeline().parameters.RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"SkippedRecordsToMove": {
-									"value": null,
-									"type": "Int64"
-								},
-								"Status": {
-									"value": "INFO",
-									"type": "String"
-								},
-								"Summary": {
-									"value": "Process is Started",
-									"type": "String"
-								},
-								"LOGSPATH": {
-									"value": null,
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "FetchTables",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "Log1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, blobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Oracle' and IsActive = 1 and LoadType='FULL'"
-							},
-							"dataset": {
-								"referenceName": "ObjectsList",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "Log2",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "FetchTables",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[BI].[SP_M_Logger]",
-							"storedProcedureParameters": {
-								"CopyDuration": {
-									"value": null,
-									"type": "Int64"
-								},
-								"ErrorInfo": {
-									"value": null,
-									"type": "String"
-								},
-								"ProcessName": {
-									"value": {
-										"value": "@pipeline().Pipeline ",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"RecordsCopiedToDest": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RecordsInSource": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RunId": {
-									"value": {
-										"value": "@pipeline().parameters.RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"SkippedRecordsToMove": {
-									"value": null,
-									"type": "Int64"
-								},
-								"Status": {
-									"value": "INFO",
-									"type": "String"
-								},
-								"Summary": {
-									"value": "Tables to Process are listed",
-									"type": "String"
-								},
-								"LOGSPATH": {
-									"value": null,
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Log3",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "FetchTables",
-								"dependencyConditions": [
-									"Failed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[BI].[SP_M_Logger]",
-							"storedProcedureParameters": {
-								"CopyDuration": {
-									"value": null,
-									"type": "Int64"
-								},
-								"ErrorInfo": {
-									"value": {
-										"value": "@substring(activity('FetchTables').Error.Message,0,if(greater(length(activity('FetchTables').Error.Message),1990),1990,sub(length(activity('FetchTables').Error.Message),2)))",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"ProcessName": {
-									"value": {
-										"value": "@pipeline().Pipeline ",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"RecordsCopiedToDest": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RecordsInSource": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RunId": {
-									"value": {
-										"value": "@pipeline().parameters.RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"SkippedRecordsToMove": {
-									"value": null,
-									"type": "Int64"
-								},
-								"Status": {
-									"value": "ERROR",
-									"type": "String"
-								},
-								"Summary": {
-									"value": "Listing Tables To Process is Failed",
-									"type": "String"
-								},
-								"LOGSPATH": {
-									"value": null,
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "ForEveryActiveObject",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Log2",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('FetchTables').Output.Value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "OracleToBlob",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "@concat('SELECT ',item().CHECKSUMCOLUMNS,' FROM ',item().SourceObjectName)",
-												"type": "Expression"
-											}
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"enableSkipIncompatibleRow": true,
-										"redirectIncompatibleRowSettings": {
-											"linkedServiceName": {
-												"referenceName": "logstore",
-												"type": "LinkedServiceReference"
-											},
-											"path": {
-												"value": "@concat('candelabiadf','/',item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().BlobLogsPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
-												"type": "Expression"
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "DatControlMaster_Source",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ADLSStage",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									]
-								},
-								{
-									"name": "Log4",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "OracleToBlob",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[BI].[SP_M_Logger]",
-										"storedProcedureParameters": {
-											"CopyDuration": {
-												"value": {
-													"value": "@activity('OracleToBlob').output.copyDuration",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"ErrorInfo": {
-												"value": null,
-												"type": "String"
-											},
-											"ProcessName": {
-												"value": {
-													"value": "@pipeline().Pipeline ",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RecordsCopiedToDest": {
-												"value": {
-													"value": "@activity('OracleToBlob').output.rowsCopied",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"RecordsInSource": {
-												"value": {
-													"value": "@activity('OracleToBlob').output.rowsRead",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"RunId": {
-												"value": {
-													"value": "@pipeline().parameters.RunId",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"SkippedRecordsToMove": {
-												"value": {
-													"value": "@activity('OracleToBlob').output.rowsSkipped",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"Status": {
-												"value": "INFO",
-												"type": "String"
-											},
-											"Summary": {
-												"value": {
-													"value": "@concat('Copied Data To Blob Storage For Table : ',item().SourceObjectName)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"LOGSPATH": {
-												"value": null,
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Log5",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "OracleToBlob",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[BI].[SP_M_Logger]",
-										"storedProcedureParameters": {
-											"CopyDuration": {
-												"value": null,
-												"type": "Int64"
-											},
-											"ErrorInfo": {
-												"value": {
-													"value": "@substring(activity('OracleToBlob').Error.Message,0,if(greater(length(activity('OracleToBlob').Error.Message),1990),1990,sub(length(activity('OracleToBlob').Error.Message),2)))",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ProcessName": {
-												"value": {
-													"value": "@pipeline().Pipeline ",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RecordsCopiedToDest": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RecordsInSource": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RunId": {
-												"value": {
-													"value": "@pipeline().parameters.RunId",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"SkippedRecordsToMove": {
-												"value": null,
-												"type": "Int64"
-											},
-											"Status": {
-												"value": "ERROR",
-												"type": "String"
-											},
-											"Summary": {
-												"value": {
-													"value": "@concat('Copying Data To Blob Storage is Failed For Table : ',item().SourceObjectName)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"LOGSPATH": {
-												"value": null,
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "ADLSToSQL",
-									"type": "Copy",
-									"dependsOn": [
-										{
-											"activity": "Log4",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "AzureSqlSink",
-											"writeBatchSize": 10000,
-											"preCopyScript": {
-												"value": "@{concat('TRUNCATE TABLE ',item().TargetObjectName)} ",
-												"type": "Expression"
-											}
-										},
-										"enableStaging": false,
-										"enableSkipIncompatibleRow": true,
-										"redirectIncompatibleRowSettings": {
-											"linkedServiceName": {
-												"referenceName": "logstore",
-												"type": "LinkedServiceReference"
-											},
-											"path": {
-												"value": "@concat('candelabiadf','/',item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().BlobLogsPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
-												"type": "Expression"
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "ADLSStage",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "TARGET_SQL",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									]
-								},
-								{
-									"name": "Log6",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "ADLSToSQL",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[BI].[SP_M_Logger]",
-										"storedProcedureParameters": {
-											"CopyDuration": {
-												"value": {
-													"value": "@activity('ADLSToSQL').output.copyDuration",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"ErrorInfo": {
-												"value": null,
-												"type": "String"
-											},
-											"ProcessName": {
-												"value": {
-													"value": "@pipeline().Pipeline ",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RecordsCopiedToDest": {
-												"value": {
-													"value": "@activity('ADLSToSQL').output.rowsCopied",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"RecordsInSource": {
-												"value": {
-													"value": "@activity('ADLSToSQL').output.rowsRead",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"RunId": {
-												"value": {
-													"value": "@pipeline().parameters.RunId",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"SkippedRecordsToMove": {
-												"value": {
-													"value": "@activity('ADLSToSQL').output.rowsSkipped",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"Status": {
-												"value": "INFO",
-												"type": "String"
-											},
-											"Summary": {
-												"value": {
-													"value": "@concat('Copied Data From Blob Storage To SQL For Table : ',item().SourceObjectName)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"LOGSPATH": {
-												"value": {
-													"value": "@if(equals(activity('ADLSToSQL').output.rowsCopied,0),'NA',activity('ADLSToSQL').output.redirectRowPath)",
-													"type": "Expression"
-												},
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Log7",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "ADLSToSQL",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[BI].[SP_M_Logger]",
-										"storedProcedureParameters": {
-											"CopyDuration": {
-												"value": null,
-												"type": "Int64"
-											},
-											"ErrorInfo": {
-												"value": {
-													"value": "@substring(activity('ADLSToSQL').Error.Message,0,if(greater(length(activity('ADLSToSQL').Error.Message),1990),1990,sub(length(activity('ADLSToSQL').Error.Message),2)))",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ProcessName": {
-												"value": {
-													"value": "@pipeline().Pipeline ",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RecordsCopiedToDest": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RecordsInSource": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RunId": {
-												"value": {
-													"value": "@pipeline().parameters.RunId",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"SkippedRecordsToMove": {
-												"value": null,
-												"type": "Int64"
-											},
-											"Status": {
-												"value": "ERROR",
-												"type": "String"
-											},
-											"Summary": {
-												"value": {
-													"value": "@concat('Copying Data From Blob Storage To SQL is Failed For Table : ',item().SourceObjectName)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"LOGSPATH": {
-												"value": null,
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "MoveFileToProcessedFolder",
-									"type": "Copy",
-									"dependsOn": [
-										{
-											"activity": "Log6",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"enableSkipIncompatibleRow": true,
-										"redirectIncompatibleRowSettings": {
-											"linkedServiceName": {
-												"referenceName": "logstore",
-												"type": "LinkedServiceReference"
-											},
-											"path": {
-												"value": "@concat('candelabiadf','/',item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().BlobLogsPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
-												"type": "Expression"
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "ADLSStage",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ADLSPROCESSED",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									]
-								},
-								{
-									"name": "Log9",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "MoveFileToProcessedFolder",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[BI].[SP_M_Logger]",
-										"storedProcedureParameters": {
-											"CopyDuration": {
-												"value": {
-													"value": "@activity('MoveFileToProcessedFolder').output.copyDuration",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"ErrorInfo": {
-												"value": null,
-												"type": "String"
-											},
-											"ProcessName": {
-												"value": {
-													"value": "@pipeline().Pipeline ",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RecordsCopiedToDest": {
-												"value": {
-													"value": "@activity('MoveFileToProcessedFolder').output.filesWritten",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"RecordsInSource": {
-												"value": {
-													"value": "@activity('MoveFileToProcessedFolder').output.filesRead",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"RunId": {
-												"value": {
-													"value": "@pipeline().parameters.RunId",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"SkippedRecordsToMove": {
-												"value": {
-													"value": "@activity('MoveFileToProcessedFolder').output.rowsSkipped",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											},
-											"Status": {
-												"value": "INFO",
-												"type": "String"
-											},
-											"Summary": {
-												"value": {
-													"value": "@concat('Copied File From PreProcessed Folder to Processed Folder For Table : ',item().SourceObjectName)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"LOGSPATH": {
-												"value": null,
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Log10",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "MoveFileToProcessedFolder",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[BI].[SP_M_Logger]",
-										"storedProcedureParameters": {
-											"CopyDuration": {
-												"value": null,
-												"type": "Int64"
-											},
-											"ErrorInfo": {
-												"value": {
-													"value": "@substring(activity('MoveFileToProcessedFolder').Error.Message,0,if(greater(length(activity('MoveFileToProcessedFolder').Error.Message),1990),1990,sub(length(activity('MoveFileToProcessedFolder').Error.Message),2)))",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ProcessName": {
-												"value": {
-													"value": "@pipeline().Pipeline ",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RecordsCopiedToDest": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RecordsInSource": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RunId": {
-												"value": {
-													"value": "@pipeline().parameters.RunId",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"SkippedRecordsToMove": {
-												"value": null,
-												"type": "Int64"
-											},
-											"Status": {
-												"value": "ERROR",
-												"type": "String"
-											},
-											"Summary": {
-												"value": {
-													"value": "@concat('Copying File From PreProcessed To Processed Folder is Failed For Table : ',item().SourceObjectName)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"LOGSPATH": {
-												"value": null,
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "DeleteFileFromPreProcessedPath",
-									"type": "Delete",
-									"dependsOn": [
-										{
-											"activity": "Log9",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataset": {
-											"referenceName": "ADLSSTAGE_REM",
-											"type": "DatasetReference",
-											"parameters": {}
-										},
-										"enableLogging": false,
-										"recursive": true
-									}
-								},
-								{
-									"name": "Log11",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "DeleteFileFromPreProcessedPath",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[BI].[SP_M_Logger]",
-										"storedProcedureParameters": {
-											"CopyDuration": {
-												"value": null,
-												"type": "Int64"
-											},
-											"ErrorInfo": {
-												"value": null,
-												"type": "String"
-											},
-											"ProcessName": {
-												"value": {
-													"value": "@pipeline().Pipeline ",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RecordsCopiedToDest": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RecordsInSource": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RunId": {
-												"value": {
-													"value": "@pipeline().parameters.RunId",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"SkippedRecordsToMove": {
-												"value": null,
-												"type": "Int64"
-											},
-											"Status": {
-												"value": "INFO",
-												"type": "String"
-											},
-											"Summary": {
-												"value": {
-													"value": "@concat('File is deleted from PreProcessed Folder For Table : ',item().SourceObjectName)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"LOGSPATH": {
-												"value": null,
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Log12",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "DeleteFileFromPreProcessedPath",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[BI].[SP_M_Logger]",
-										"storedProcedureParameters": {
-											"CopyDuration": {
-												"value": null,
-												"type": "Int64"
-											},
-											"ErrorInfo": {
-												"value": {
-													"value": "@substring(activity('DeleteFileFromPreProcessedPath').Error.Message,0,if(greater(length(activity('DeleteFileFromPreProcessedPath').Error.Message),1990),1990,sub(length(activity('DeleteFileFromPreProcessedPath').Error.Message),2)))",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ProcessName": {
-												"value": {
-													"value": "@pipeline().Pipeline ",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RecordsCopiedToDest": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RecordsInSource": {
-												"value": null,
-												"type": "Int64"
-											},
-											"RunId": {
-												"value": {
-													"value": "@pipeline().parameters.RunId",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"SkippedRecordsToMove": {
-												"value": null,
-												"type": "Int64"
-											},
-											"Status": {
-												"value": "ERROR",
-												"type": "String"
-											},
-											"Summary": {
-												"value": {
-													"value": "@concat('Deleting file from PreProcessed Folder is Failed For Table : ',item().SourceObjectName)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"LOGSPATH": {
-												"value": null,
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								}
-							]
-						}
-					}
-				],
-				"parameters": {
-					"RunId": {
-						"type": "string",
-						"defaultValue": "-1"
-					},
-					"LoadType": {
-						"type": "string",
-						"defaultValue": "Full"
-					}
-				},
-				"variables": {
-					"t1": {
-						"type": "String",
-						"defaultValue": "test"
-					}
-				},
-				"folder": {
-					"name": "Oracle"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
-				"[concat(variables('factoryId'), '/datasets/ObjectsList')]",
-				"[concat(variables('factoryId'), '/datasets/DatControlMaster_Source')]",
 				"[concat(variables('factoryId'), '/datasets/ADLSStage')]",
 				"[concat(variables('factoryId'), '/datasets/TARGET_SQL')]",
 				"[concat(variables('factoryId'), '/datasets/ADLSPROCESSED')]",
@@ -8053,395 +8442,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PL_CANDELAKPI')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Combination of Oracle and Salesforce data load",
-				"activities": [
-					{
-						"name": "Oracle_Full_Load",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_FULL_ORACLE_AZSQLDB",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"LoadType": "Full"
-							}
-						}
-					},
-					{
-						"name": "Oracle_Incremental_Load",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_INCREMENTAL_ORACLE_AZSQLDB",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"LoadType": "Incremental"
-							}
-						}
-					},
-					{
-						"name": "Salesforce_Full_Load",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_SALESFORCE_AZSQLDB_FULL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"LoadType": "Full"
-							}
-						}
-					},
-					{
-						"name": "Salesforce_Incremental_Load",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_INCREMENTAL_SALESFORCE_AZSSQLDB",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"LoadType": "Incremental"
-							}
-						}
-					},
-					{
-						"name": "SalesForce_DataModel",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Salesforce_Incremental_Load",
-								"dependencyConditions": [
-									"Completed"
-								]
-							},
-							{
-								"activity": "Salesforce_Full_Load",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_SALESFORCE_LOAD_DATAMODEL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								}
-							}
-						}
-					},
-					{
-						"name": "Oracle_DataModel",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Oracle_Incremental_Load",
-								"dependencyConditions": [
-									"Completed"
-								]
-							},
-							{
-								"activity": "Oracle_Full_Load",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_ORACLE_LOAD_DATAMODEL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								}
-							}
-						}
-					},
-					{
-						"name": "ProcessAAS",
-						"type": "AzureFunctionActivity",
-						"dependsOn": [
-							{
-								"activity": "SalesForce_DataModel",
-								"dependencyConditions": [
-									"Completed"
-								]
-							},
-							{
-								"activity": "Oracle_DataModel",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"functionName": {
-								"value": "@concat('PROCESSAAS?modelname=','CANDELAKPI&ProcessName=',pipeline().Pipeline,'&RunId=',pipeline().RunId)",
-								"type": "Expression"
-							},
-							"method": "GET",
-							"headers": {}
-						},
-						"linkedServiceName": {
-							"referenceName": "ProcessAAS",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Log31",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "ProcessAAS",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[BI].[SP_M_Logger]",
-							"storedProcedureParameters": {
-								"CopyDuration": {
-									"value": null,
-									"type": "Int64"
-								},
-								"ErrorInfo": {
-									"value": null,
-									"type": "String"
-								},
-								"LOGSPATH": {
-									"value": null,
-									"type": "String"
-								},
-								"ProcessName": {
-									"value": {
-										"value": "@pipeline().Pipeline",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"RecordsCopiedToDest": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RecordsInSource": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RunId": {
-									"value": {
-										"value": "@pipeline().RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"SkippedRecordsToMove": {
-									"value": null,
-									"type": "Int64"
-								},
-								"Status": {
-									"value": "INFO",
-									"type": "String"
-								},
-								"Summary": {
-									"value": "Processing AAS Model is completed successfully",
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Log32",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "ProcessAAS",
-								"dependencyConditions": [
-									"Failed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[BI].[SP_M_Logger]",
-							"storedProcedureParameters": {
-								"CopyDuration": {
-									"value": null,
-									"type": "Int64"
-								},
-								"ErrorInfo": {
-									"value": {
-										"value": "@substring(activity('ProcessAAS').Error.Message,0,if(greater(length(activity('ProcessAAS').Error.Message),1990),1990,sub(length(activity('ProcessAAS').Error.Message),2)))",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"LOGSPATH": {
-									"value": null,
-									"type": "String"
-								},
-								"ProcessName": {
-									"value": {
-										"value": "@pipeline().Pipeline",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"RecordsCopiedToDest": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RecordsInSource": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RunId": {
-									"value": {
-										"value": "@pipeline().RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"SkippedRecordsToMove": {
-									"value": null,
-									"type": "Int64"
-								},
-								"Status": {
-									"value": "ERROR",
-									"type": "String"
-								},
-								"Summary": {
-									"value": "Failed to Process AAS Model",
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "EmailNotification",
-						"type": "AzureFunctionActivity",
-						"dependsOn": [
-							{
-								"activity": "ProcessAAS",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"functionName": {
-								"value": "@concat('SendEmail?RunId=',pipeline().RunId,'&ProcessName=',pipeline().Pipeline)",
-								"type": "Expression"
-							},
-							"method": "GET",
-							"headers": {}
-						},
-						"linkedServiceName": {
-							"referenceName": "EmailService",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_FULL_ORACLE_AZSQLDB')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_INCREMENTAL_ORACLE_AZSQLDB')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_AZSQLDB_FULL')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_INCREMENTAL_SALESFORCE_AZSSQLDB')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_LOAD_DATAMODEL')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_ORACLE_LOAD_DATAMODEL')]",
-				"[concat(variables('factoryId'), '/linkedServices/ProcessAAS')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
-				"[concat(variables('factoryId'), '/linkedServices/EmailService')]"
-			]
 		}
 	]
 }
