@@ -93,7 +93,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, BlobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Salesforce' and IsActive = 1 and LoadType='FULL'"
+						"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, BlobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Salesforce' and IsActive = 1 --and LoadType='FULL'"
 					},
 					"dataset": {
 						"referenceName": "ObjectsList",
