@@ -10,14 +10,9 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@concat(item().SourceObjectName,'.txt')",
-					"type": "Expression"
-				},
-				"fileSystem": {
-					"value": "@concat(item().ContainerName,'/',pipeline().parameters.LoadType,'/',item().ADLSPreProcessedPath,item().SourceObjectName,'/',item().Today,'/',pipeline().parameters.RunId)",
-					"type": "Expression"
-				}
+				"fileName": "test1.txt",
+				"folderPath": "test",
+				"fileSystem": "salesforce"
 			},
 			"columnDelimiter": "|",
 			"escapeChar": "\\",
