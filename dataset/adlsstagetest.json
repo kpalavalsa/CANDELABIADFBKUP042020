@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "test1.txt",
+				"fileName": "test2.txt",
 				"folderPath": "test",
 				"fileSystem": "salesforce"
 			},
