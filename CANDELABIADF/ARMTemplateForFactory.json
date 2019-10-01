@@ -7414,7 +7414,7 @@
 						}
 					},
 					"columnDelimiter": "|",
-					"escapeChar": "/",
+					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"nullValue": "\\N",
 					"quoteChar": "\""
