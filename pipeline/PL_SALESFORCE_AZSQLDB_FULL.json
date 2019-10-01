@@ -272,6 +272,8 @@
 						"value": "@activity('FetchTables').Output.Value",
 						"type": "Expression"
 					},
+					"isSequential": false,
+					"batchCount": 8,
 					"activities": [
 						{
 							"name": "SalesforceToBlob",
