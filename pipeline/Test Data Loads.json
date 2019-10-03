@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SalesforceSource",
-						"query": "select * from product2 where productcode='8085-50-9039'",
+						"query": "select Name,ProductCode from product2 where productcode='8085-50-9039'",
 						"readBehavior": "query"
 					},
 					"sink": {
