@@ -20,12 +20,6 @@
 		"ProcessAAS_functionKey": {
 			"value": ""
 		},
-		"Salesforce_password": {
-			"value": ""
-		},
-		"Salesforce_securityToken": {
-			"value": ""
-		},
 		"logstore_connectionString": {
 			"value": ""
 		},

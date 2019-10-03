@@ -27,14 +27,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'functionKey' of 'ProcessAAS'"
 		},
-		"Salesforce_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'Salesforce'"
-		},
-		"Salesforce_securityToken": {
-			"type": "secureString",
-			"metadata": "Secure string for 'securityToken' of 'Salesforce'"
-		},
 		"logstore_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'logstore'"
@@ -86,12 +78,6 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"AzureSqlDatabase_connectionString": {
-						"value": "[parameters('AzureSqlDatabase_connectionString')]"
-					},
-					"DataControlMaster_connectionString": {
-						"value": "[parameters('DataControlMaster_connectionString')]"
-					},
 					"DataLakeStorage_accountKey": {
 						"value": "[parameters('DataLakeStorage_accountKey')]"
 					},
@@ -101,14 +87,14 @@
 					"ProcessAAS_functionKey": {
 						"value": "[parameters('ProcessAAS_functionKey')]"
 					},
-					"Salesforce_password": {
-						"value": "[parameters('Salesforce_password')]"
-					},
-					"Salesforce_securityToken": {
-						"value": "[parameters('Salesforce_securityToken')]"
-					},
 					"logstore_connectionString": {
 						"value": "[parameters('logstore_connectionString')]"
+					},
+					"AzureSqlDatabase_connectionString": {
+						"value": "[parameters('AzureSqlDatabase_connectionString')]"
+					},
+					"DataControlMaster_connectionString": {
+						"value": "[parameters('DataControlMaster_connectionString')]"
 					},
 					"AzureKeyVault_properties_typeProperties_baseUrl": {
 						"value": "[parameters('AzureKeyVault_properties_typeProperties_baseUrl')]"
@@ -116,14 +102,14 @@
 					"DataLakeStorage_properties_typeProperties_url": {
 						"value": "[parameters('DataLakeStorage_properties_typeProperties_url')]"
 					},
-					"Salesforce_properties_typeProperties_username": {
-						"value": "[parameters('Salesforce_properties_typeProperties_username')]"
-					},
 					"ADLSSTAGE_REM_properties_typeProperties_fileName": {
 						"value": "[parameters('ADLSSTAGE_REM_properties_typeProperties_fileName')]"
 					},
 					"ADLSSTAGE_REM_properties_typeProperties_folderPath": {
 						"value": "[parameters('ADLSSTAGE_REM_properties_typeProperties_folderPath')]"
+					},
+					"Salesforce_properties_typeProperties_username": {
+						"value": "[parameters('Salesforce_properties_typeProperties_username')]"
 					}
 				}
 			},
