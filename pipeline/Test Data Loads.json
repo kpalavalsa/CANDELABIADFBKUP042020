@@ -16,9 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "SalesforceSource",
-						"query": "select Name,ProductCode from product2 where productcode='8085-50-9039'",
-						"readBehavior": "query"
+						"type": "AzureSqlSource"
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
@@ -35,7 +33,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Salesforce_Source",
+						"referenceName": "testkpidev",
 						"type": "DatasetReference"
 					}
 				],
