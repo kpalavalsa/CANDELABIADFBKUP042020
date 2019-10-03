@@ -17,10 +17,19 @@
 				"typeProperties": {
 					"source": {
 						"type": "SalesforceSource",
+						"query": "select * from product2 where productcode='8085-50-9039'",
 						"readBehavior": "query"
 					},
 					"sink": {
-						"type": "AzureSqlSink"
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
 					},
 					"enableStaging": false
 				},
@@ -32,7 +41,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "ObjectsList",
+						"referenceName": "adlsstagetest",
 						"type": "DatasetReference"
 					}
 				]
