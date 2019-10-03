@@ -16,7 +16,9 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "AzureSqlSource"
+						"type": "SalesforceSource",
+						"query": "select * from opportunity where id='0063000000AoPgbAAF'",
+						"readBehavior": "query"
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
@@ -33,7 +35,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "testkpidev",
+						"referenceName": "Salesforce_Source",
 						"type": "DatasetReference"
 					}
 				],
