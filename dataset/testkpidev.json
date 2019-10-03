@@ -1,0 +1,25 @@
+{
+	"name": "testkpidev",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "NAMe",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductCode",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "testproduct2"
+		}
+	}
+}
