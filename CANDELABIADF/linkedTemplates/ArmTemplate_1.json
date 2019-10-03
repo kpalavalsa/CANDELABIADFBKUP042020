@@ -3145,14 +3145,12 @@
 									"userProperties": [],
 									"typeProperties": {
 										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true
+											"type": "SalesforceSource",
+											"query": {
+												"value": "@concat('SELECT ',item().CHECKSUMCOLUMNS,' FROM ',item().SourceObjectName,' ',item().WhereCondition)",
+												"type": "Expression"
 											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
+											"readBehavior": "query"
 										},
 										"sink": {
 											"type": "AzureSqlSink",
@@ -3178,7 +3176,7 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "ADLSStage",
+											"referenceName": "Salesforce_Source",
 											"type": "DatasetReference",
 											"parameters": {}
 										}
@@ -5122,14 +5120,12 @@
 									"userProperties": [],
 									"typeProperties": {
 										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true
+											"type": "SalesforceSource",
+											"query": {
+												"value": "@concat('SELECT ',item().CHECKSUMCOLUMNS,' FROM ',item().SourceObjectName)",
+												"type": "Expression"
 											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
+											"readBehavior": "query"
 										},
 										"sink": {
 											"type": "AzureSqlSink",
@@ -5154,7 +5150,7 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "ADLSStage",
+											"referenceName": "Salesforce_Source",
 											"type": "DatasetReference",
 											"parameters": {}
 										}
@@ -6390,7 +6386,9 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "AzureSqlSource"
+								"type": "SalesforceSource",
+								"query": "select * from opportunity where id='0063000000AoPgbAAF'",
+								"readBehavior": "query"
 							},
 							"sink": {
 								"type": "DelimitedTextSink",
@@ -6407,7 +6405,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "testkpidev",
+								"referenceName": "Salesforce_Source",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
