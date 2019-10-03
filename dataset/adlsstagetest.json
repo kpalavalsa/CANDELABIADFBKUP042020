@@ -15,9 +15,9 @@
 				"fileSystem": "salesforce"
 			},
 			"columnDelimiter": "|",
-			"escapeChar": "`",
+			"escapeChar": "\\",
 			"firstRowAsHeader": true,
-			"nullValue": "`N",
+			"nullValue": "\\N",
 			"quoteChar": "\""
 		},
 		"schema": []
