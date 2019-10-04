@@ -212,7 +212,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[ORACLE].[SP_M_FULL_LOAD_DIMENSIONS]"
+								"storedProcedureName": "[ORACLE].[SP_M_INCREMENTAL_LOAD_DIMENSIONS]"
 							},
 							"linkedServiceName": {
 								"referenceName": "AzureSqlDatabase",
@@ -392,7 +392,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[ORACLE].[SP_M_FULL_FACT_SALES_ORDER]"
+								"storedProcedureName": "[ORACLE].[SP_M_INCREMENTAL_FACT_SALES_ORDER]"
 							},
 							"linkedServiceName": {
 								"referenceName": "AzureSqlDatabase",
