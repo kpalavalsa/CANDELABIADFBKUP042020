@@ -103,7 +103,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_SALESFORCE_LOAD_DATAMODEL",
+						"referenceName": "PL_SALESFORCE_INCREMENTAL_LOAD_DATAMODEL",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -135,7 +135,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PL_ORACLE_LOAD_DATAMODEL",
+						"referenceName": "PL_ORACLE_INCREMENTAL_LOAD_DATAMODEL",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
