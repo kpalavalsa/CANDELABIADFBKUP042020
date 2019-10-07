@@ -522,13 +522,10 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "DelimitedTextSource",
-									"storeSettings": {
-										"type": "AzureBlobFSReadSettings",
-										"recursive": true
-									},
-									"formatSettings": {
-										"type": "DelimitedTextReadSettings"
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('SELECT ',item().CHECKSUMCOLUMNS,' FROM ',item().SourceObjectName)",
+										"type": "Expression"
 									}
 								},
 								"sink": {
@@ -554,7 +551,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "ADLSStage",
+									"referenceName": "DatControlMaster_Source",
 									"type": "DatasetReference"
 								}
 							],
