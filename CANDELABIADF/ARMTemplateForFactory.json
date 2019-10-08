@@ -15,18 +15,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DataControlMaster'"
 		},
-		"DataLakeStorage_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'DataLakeStorage'"
-		},
-		"EmailService_functionKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'functionKey' of 'EmailService'"
-		},
-		"ProcessAAS_functionKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'functionKey' of 'ProcessAAS'"
-		},
 		"logstore_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'logstore'"
@@ -1363,13 +1351,10 @@
 									"userProperties": [],
 									"typeProperties": {
 										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('SELECT ',item().CHECKSUMCOLUMNS,' FROM ',item().SourceObjectName)",
+												"type": "Expression"
 											}
 										},
 										"sink": {
@@ -1395,7 +1380,7 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "ADLSStage",
+											"referenceName": "DatControlMaster_Source",
 											"type": "DatasetReference",
 											"parameters": {}
 										}
@@ -2575,13 +2560,10 @@
 									"userProperties": [],
 									"typeProperties": {
 										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('SELECT ',item().CHECKSUMCOLUMNS,' FROM ',item().SourceObjectName,' ',item().WhereCondition)",
+												"type": "Expression"
 											}
 										},
 										"sink": {
@@ -2608,7 +2590,7 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "ADLSStage",
+											"referenceName": "DatControlMaster_Source",
 											"type": "DatasetReference",
 											"parameters": {}
 										}
@@ -6308,7 +6290,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, BlobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Salesforce' and IsActive = 1 and LoadType='FULL'"
+								"sqlReaderQuery": "select SourceSchemaName,SourceObjectName,ObjectType,'['+TargetSchemaName+'].['+TargetObjectName+']' as TargetObjectName, ADLSPreProcessedPath, ADLSProcessedPath, BlobLogsPath,convert(varchar,getdate(),112) as Today,CHECKSUMCOLUMNS,ContainerName From bi.MM_ObjectsList where SourceServer='Salesforce' and IsActive = 1  and LoadType='FULL'"
 							},
 							"dataset": {
 								"referenceName": "ObjectsList",
@@ -9989,12 +9971,18 @@
 				"typeProperties": {
 					"url": "[parameters('DataLakeStorage_properties_typeProperties_url')]",
 					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('DataLakeStorage_accountKey')]"
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "CandelaBIADLS"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/EmailService')]",
@@ -10006,12 +9994,18 @@
 				"typeProperties": {
 					"functionAppUrl": "https://candelabifa.azurewebsites.net",
 					"functionKey": {
-						"type": "SecureString",
-						"value": "[parameters('EmailService_functionKey')]"
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "emailservice"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ProcessAAS')]",
@@ -10023,12 +10017,18 @@
 				"typeProperties": {
 					"functionAppUrl": "https://candelabifa.azurewebsites.net",
 					"functionKey": {
-						"type": "SecureString",
-						"value": "[parameters('ProcessAAS_functionKey')]"
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "processaas"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Salesforce')]",
@@ -10070,10 +10070,20 @@
 				"annotations": [],
 				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"connectionString": "[parameters('logstore_connectionString')]"
+					"connectionString": "[parameters('logstore_connectionString')]",
+					"accountKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "CandelaBIsa"
+					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault')]"
+			]
 		}
 	]
 }

@@ -11,15 +11,6 @@
 		"DataControlMaster_connectionString": {
 			"value": ""
 		},
-		"DataLakeStorage_accountKey": {
-			"value": ""
-		},
-		"EmailService_functionKey": {
-			"value": ""
-		},
-		"ProcessAAS_functionKey": {
-			"value": ""
-		},
 		"logstore_connectionString": {
 			"value": ""
 		},
