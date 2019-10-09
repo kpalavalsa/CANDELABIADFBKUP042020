@@ -246,7 +246,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"storedProcedureName": " [salesforce].[SP_M_FULL_LOAD_FACT_ENGAGEMENT]"
+							"storedProcedureName": "[[salesforce].[SP_M_FULL_LOAD_FACT_ENGAGEMENT_BAK]"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureSqlDatabase",
