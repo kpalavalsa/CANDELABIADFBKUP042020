@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[salesforce].[SP_M_FULL_LOAD_FACT_ENGAGEMENT_BAK]"
+					"storedProcedureName": "[salesforce].[SP_M_FULL_LOAD_DIM_OPPORTUNITY_LINE_ITEMS]"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureSqlDatabase",
