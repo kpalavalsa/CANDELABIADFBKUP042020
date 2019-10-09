@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[ORACLE].[SP_M_FULL_FACT_SALES_ORDER]"
+					"storedProcedureName": " [salesforce].[SP_M_FULL_LOAD_FACT_ENGAGEMENT]"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureSqlDatabase",
