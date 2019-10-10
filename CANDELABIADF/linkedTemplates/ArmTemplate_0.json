@@ -228,7 +228,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Test Data Loads')]",
+			"name": "[concat(parameters('factoryName'), '/ProcessAAS')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
