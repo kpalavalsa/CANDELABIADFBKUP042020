@@ -1,6 +1,72 @@
 {
 	"name": "DataQualityChecker_Rule",
 	"properties": {
+		"activities": [
+			{
+				"name": "List the Rules",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT *\n  FROM [BI].[DataQualityRules] Where Isactive=1"
+					},
+					"dataset": {
+						"referenceName": "ObjectsList",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "DQTableLoop",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "List the Rules",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('List the Rules').output.Value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "DataQualityTable",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "DataQualityChecker_Table",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"PipelineRunId": {
+										"value": "@pipeline().parameters.PipelineRunId",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
 		"parameters": {
 			"PipelineRunId": {
 				"type": "string",
