@@ -1,6 +1,12 @@
 {
 	"name": "DataQualityChecker_Table",
 	"properties": {
+		"parameters": {
+			"PipelineRunId": {
+				"type": "string",
+				"defaultValue": "-1"
+			}
+		},
 		"annotations": []
 	}
 }
