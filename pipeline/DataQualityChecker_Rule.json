@@ -1,6 +1,12 @@
 {
 	"name": "DataQualityChecker_Rule",
 	"properties": {
+		"parameters": {
+			"PipelineRunId": {
+				"type": "string",
+				"defaultValue": "-1"
+			}
+		},
 		"annotations": []
 	}
 }
