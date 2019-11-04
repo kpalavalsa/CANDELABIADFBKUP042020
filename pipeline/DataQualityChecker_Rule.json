@@ -59,6 +59,14 @@
 									"PipelineRunId": {
 										"value": "@pipeline().parameters.PipelineRunId",
 										"type": "Expression"
+									},
+									"Id": {
+										"value": "@item().Id",
+										"type": "Expression"
+									},
+									"RuleName": {
+										"value": "@item().DQRuleName",
+										"type": "Expression"
 									}
 								}
 							}
