@@ -17,9 +17,15 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": {
-							"value": "@concat('Select * From BI.DataQualityTables Where DQRId=',pipeline().parameters.Id)",
-							"type": "Expression"
+						"sqlReaderStoredProcedureName": "[dbo].[DQTableExpressions]",
+						"storedProcedureParameters": {
+							"DQRId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.Id",
+									"type": "Expression"
+								}
+							}
 						}
 					},
 					"dataset": {
