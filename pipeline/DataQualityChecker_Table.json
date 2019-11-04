@@ -34,6 +34,25 @@
 					},
 					"firstRowOnly": false
 				}
+			},
+			{
+				"name": "ForAllDQTables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "ListTables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('ListTables').output.Value",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
