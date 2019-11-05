@@ -62,7 +62,31 @@
 								"expression": {
 									"value": "@equals(item().SourceServer,'Oracle')",
 									"type": "Expression"
-								}
+								},
+								"ifTrueActivities": [
+									{
+										"name": "OracleLookup",
+										"type": "Lookup",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource"
+											},
+											"dataset": {
+												"referenceName": "DQDataControlMaster",
+												"type": "DatasetReference"
+											}
+										}
+									}
+								]
 							}
 						},
 						{
