@@ -145,7 +145,20 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@if(equals(item().TargetExpression,'NULL'),'SELECT NULL',item().TargetExpression)",
+										"type": "Expression"
+									}
+								},
+								"dataset": {
+									"referenceName": "DQTarget",
+									"type": "DatasetReference"
+								}
+							}
 						},
 						{
 							"name": "DimLookup",
@@ -158,7 +171,20 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@if(equals(item().DimExpression,'NULL'),'SELECT NULL',item().DimExpression)",
+										"type": "Expression"
+									}
+								},
+								"dataset": {
+									"referenceName": "DQTarget",
+									"type": "DatasetReference"
+								}
+							}
 						},
 						{
 							"name": "FactLookup",
@@ -171,7 +197,20 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@if(equals(item().FactExpression,'NULL'),'SELECT NULL',item().FactExpression)",
+										"type": "Expression"
+									}
+								},
+								"dataset": {
+									"referenceName": "DQTarget",
+									"type": "DatasetReference"
+								}
+							}
 						}
 					]
 				}
