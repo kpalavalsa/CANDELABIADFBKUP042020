@@ -230,12 +230,6 @@
 				"defaultValue": "-1"
 			}
 		},
-		"variables": {
-			"Counts": {
-				"type": "String",
-				"defaultValue": "-1"
-			}
-		},
 		"annotations": []
 	}
 }
