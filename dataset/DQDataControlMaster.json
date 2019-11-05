@@ -5,11 +5,6 @@
 			"referenceName": "DataControlMaster",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"test": {
-				"type": "string"
-			}
-		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": []
