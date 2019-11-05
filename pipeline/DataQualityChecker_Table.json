@@ -15,6 +15,23 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[DQTableExpressions]",
+						"storedProcedureParameters": {
+							"DQRId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.Id",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"dataset": {
+						"referenceName": "ObjectsList",
+						"type": "DatasetReference"
+					},
 					"firstRowOnly": false
 				}
 			},
@@ -210,6 +227,12 @@
 			},
 			"RuleName": {
 				"type": "string",
+				"defaultValue": "-1"
+			}
+		},
+		"variables": {
+			"Counts": {
+				"type": "String",
 				"defaultValue": "-1"
 			}
 		},
