@@ -1,0 +1,631 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "CANDELABIADF"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DataQualityChecker_Table')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ListTables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[dbo].[DQTableExpressions]",
+								"storedProcedureParameters": {
+									"DQRId": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.Id",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "ObjectsList",
+								"type": "DatasetReference"
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForAllDQTables",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "ListTables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('ListTables').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "OracleSource",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(item().SourceServer,'Oracle')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "OracleLookup",
+												"type": "Lookup",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "AzureSqlSource",
+														"sqlReaderQuery": {
+															"value": "@item().SourceExpression",
+															"type": "Expression"
+														}
+													},
+													"dataset": {
+														"referenceName": "DQDataControlMaster",
+														"type": "DatasetReference"
+													}
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "SalesForceSource",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(item().SourceServer,'SalesForce')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "SalesForceLookup",
+												"type": "Lookup",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "SalesforceSource",
+														"query": {
+															"value": "@item().SourceExpression",
+															"type": "Expression"
+														},
+														"readBehavior": "query"
+													},
+													"dataset": {
+														"referenceName": "Salesforce_Source",
+														"type": "DatasetReference"
+													}
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "TargetLookUp",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@if(equals(item().TargetExpression,'NULL'),'SELECT NULL',item().TargetExpression)",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "DQTarget",
+											"type": "DatasetReference"
+										}
+									}
+								},
+								{
+									"name": "DimLookup",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@if(equals(item().DimExpression,'NULL'),'SELECT NULL',item().DimExpression)",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "DQTarget",
+											"type": "DatasetReference"
+										}
+									}
+								},
+								{
+									"name": "FactLookup",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@if(equals(item().FactExpression,'NULL'),'SELECT NULL',item().FactExpression)",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "DQTarget",
+											"type": "DatasetReference"
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"PipelineRunId": {
+						"type": "string",
+						"defaultValue": "-1"
+					},
+					"Id": {
+						"type": "string",
+						"defaultValue": "-1"
+					},
+					"RuleName": {
+						"type": "string",
+						"defaultValue": "-1"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_CANDELAKPI_INCREMENTAL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Combination of Oracle and Salesforce data load",
+				"activities": [
+					{
+						"name": "Oracle_Full_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_FULL_ORACLE_AZSQLDB",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Full"
+							}
+						}
+					},
+					{
+						"name": "Oracle_Incremental_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_INCREMENTAL_ORACLE_AZSQLDB",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Incremental"
+							}
+						}
+					},
+					{
+						"name": "Salesforce_Full_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_SALESFORCE_AZSQLDB_FULL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Full"
+							}
+						}
+					},
+					{
+						"name": "Salesforce_Incremental_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_INCREMENTAL_SALESFORCE_AZSSQLDB",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Incremental"
+							}
+						}
+					},
+					{
+						"name": "SalesForce_DataModel",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Salesforce_Incremental_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "Salesforce_Full_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_SALESFORCE_INCREMENTAL_LOAD_DATAMODEL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Oracle_DataModel",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Oracle_Incremental_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "Oracle_Full_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_ORACLE_INCREMENTAL_LOAD_DATAMODEL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "ProcessAAS",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [
+							{
+								"activity": "SalesForce_DataModel",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "Oracle_DataModel",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 3,
+							"retryIntervalInSeconds": 60,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": {
+								"value": "@concat('PROCESSAAS?modelname=','CANDELAKPI&ProcessName=',pipeline().Pipeline,'&RunId=',pipeline().RunId)",
+								"type": "Expression"
+							},
+							"method": "GET"
+						},
+						"linkedServiceName": {
+							"referenceName": "ProcessAAS",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Log31",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[BI].[SP_M_Logger]",
+							"storedProcedureParameters": {
+								"CopyDuration": {
+									"value": null,
+									"type": "Int64"
+								},
+								"ErrorInfo": {
+									"value": null,
+									"type": "String"
+								},
+								"LOGSPATH": {
+									"value": null,
+									"type": "String"
+								},
+								"ProcessName": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RecordsCopiedToDest": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RecordsInSource": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RunId": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SkippedRecordsToMove": {
+									"value": null,
+									"type": "Int64"
+								},
+								"Status": {
+									"value": "INFO",
+									"type": "String"
+								},
+								"Summary": {
+									"value": "Processing AAS Model is completed successfully",
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Log32",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[BI].[SP_M_Logger]",
+							"storedProcedureParameters": {
+								"CopyDuration": {
+									"value": null,
+									"type": "Int64"
+								},
+								"ErrorInfo": {
+									"value": {
+										"value": "@substring(activity('ProcessAAS').Error.Message,0,if(greater(length(activity('ProcessAAS').Error.Message),1990),1990,sub(length(activity('ProcessAAS').Error.Message),2)))",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"LOGSPATH": {
+									"value": null,
+									"type": "String"
+								},
+								"ProcessName": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RecordsCopiedToDest": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RecordsInSource": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RunId": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SkippedRecordsToMove": {
+									"value": null,
+									"type": "Int64"
+								},
+								"Status": {
+									"value": "ERROR",
+									"type": "String"
+								},
+								"Summary": {
+									"value": "Failed to Process AAS Model",
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "EmailNotification",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": {
+								"value": "@concat('SendEmail?RunId=',pipeline().RunId,'&ProcessName=',pipeline().Pipeline)",
+								"type": "Expression"
+							},
+							"method": "GET"
+						},
+						"linkedServiceName": {
+							"referenceName": "EmailService",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
