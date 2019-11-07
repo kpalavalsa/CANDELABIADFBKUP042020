@@ -288,7 +288,7 @@
 									},
 									"SourceCount": {
 										"value": {
-											"value": "@if(equals(toUpper(item().SourceServer),'ORACLE'),activity('OracleLookup').output.Counts,if(equals(toUpper(item().SourceServer),'SALESFORCE'),activity('SalesForceLookup').output.count(),-2))",
+											"value": "@if(equals(toUpper(item().SourceServer),'ORACLE'),activity('OracleLookup').output.Counts,'-2')",
 											"type": "Expression"
 										},
 										"type": "Int64"
