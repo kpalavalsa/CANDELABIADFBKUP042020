@@ -273,7 +273,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@if(equals(item().DimExpression,'NULL'),'SELECT -1 as Counts',item().DimExpression)",
+												"value": "@if(empty(item().DimExpression),'SELECT -1 as Counts',item().DimExpression)",
 												"type": "Expression"
 											}
 										},
@@ -300,7 +300,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@if(equals(item().FactExpression,'NULL'),'SELECT -1 As Counts',item().FactExpression)",
+												"value": "@if(empty(item().FactExpression),'SELECT -1 As Counts',item().FactExpression)",
 												"type": "Expression"
 											}
 										},
