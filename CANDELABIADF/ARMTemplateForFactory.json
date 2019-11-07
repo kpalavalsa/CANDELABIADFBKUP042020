@@ -9234,14 +9234,14 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/load_fact_Ora')]",
+			"name": "[concat(parameters('factoryName'), '/SalesforceQueryTest')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Stored Procedure1",
-						"type": "SqlServerStoredProcedure",
+						"name": "Lookup1",
+						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
@@ -9252,21 +9252,32 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"storedProcedureName": "[[salesforce].[SP_M_FULL_LOAD_FACT_ENGAGEMENT]"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
+							"source": {
+								"type": "SalesforceSource",
+								"query": "Select Count(id)   total  From OpportunityLineItem Where LastModifiedDate <= 2019-11-07T09:00:33Z ",
+								"readBehavior": "query"
+							},
+							"dataset": {
+								"referenceName": "Salesforce_Source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
 						}
 					}
 				],
+				"variables": {
+					"value": {
+						"type": "String",
+						"defaultValue": "-1"
+					}
+				},
 				"folder": {
 					"name": "Test"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+				"[concat(variables('factoryId'), '/datasets/Salesforce_Source')]"
 			]
 		},
 		{
