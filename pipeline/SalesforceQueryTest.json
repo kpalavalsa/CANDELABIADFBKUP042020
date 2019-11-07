@@ -41,7 +41,7 @@
 				"typeProperties": {
 					"variableName": "value",
 					"value": {
-						"value": "@activity('Lookup1').output.firstRow.total",
+						"value": "@activity('Lookup1').output.firstRow.'count(id)'",
 						"type": "Expression"
 					}
 				}
