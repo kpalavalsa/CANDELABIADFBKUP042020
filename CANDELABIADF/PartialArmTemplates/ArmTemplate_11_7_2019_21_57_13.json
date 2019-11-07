@@ -1,0 +1,349 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "CANDELABIADF"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DataQualityChecker_Table')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ListTables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[dbo].[DQTableExpressions]",
+								"storedProcedureParameters": {
+									"DQRId": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.Id",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "ObjectsList",
+								"type": "DatasetReference"
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForAllDQTables",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "ListTables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('ListTables').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "OracleSource",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(toUpper(item().SourceServer),'ORACLE')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "OracleLookup",
+												"type": "Lookup",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "AzureSqlSource",
+														"sqlReaderQuery": {
+															"value": "@item().SourceExpression",
+															"type": "Expression"
+														}
+													},
+													"dataset": {
+														"referenceName": "DQDataControlMaster",
+														"type": "DatasetReference"
+													}
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "SalesForceSource",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(toUpper(item().SourceServer),'SALESFORCE')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "SalesForceLookup",
+												"type": "Lookup",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "SalesforceSource",
+														"query": {
+															"value": "@item().SourceExpression",
+															"type": "Expression"
+														},
+														"readBehavior": "query"
+													},
+													"dataset": {
+														"referenceName": "Salesforce_Source",
+														"type": "DatasetReference"
+													}
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "TargetLookUp",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@if(equals(item().TargetExpression,'NULL'),'SELECT NULL',item().TargetExpression)",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "DQTarget",
+											"type": "DatasetReference"
+										}
+									}
+								},
+								{
+									"name": "DimLookup",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@if(empty(item().DimExpression),'SELECT -1 as Counts',item().DimExpression)",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "DQTarget",
+											"type": "DatasetReference"
+										}
+									}
+								},
+								{
+									"name": "FactLookup",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@if(empty(item().FactExpression),'SELECT -1 As Counts',item().FactExpression)",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "DQTarget",
+											"type": "DatasetReference"
+										}
+									}
+								},
+								{
+									"name": "LogSummary",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "OracleSource",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "SalesForceSource",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "TargetLookUp",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "DimLookup",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "FactLookup",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_LOADDQSUMMARY]",
+										"storedProcedureParameters": {
+											"DIMCOUNT": {
+												"value": {
+													"value": "@activity('DimLookup').output.firstRow.Counts",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"DQTID": {
+												"value": {
+													"value": "@item().Id",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"FACTCOUNT": {
+												"value": {
+													"value": "@activity('FactLookup').output.firstRow.Counts",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"RunID": {
+												"value": {
+													"value": "@pipeline().parameters.PipelineRunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SourceCount": {
+												"value": {
+													"value": "@if(equals(toUpper(item().SourceServer),'ORACLE'),activity('OracleLookup').output.firstRow.Counts,if(equals(toUpper(item().SourceServer),'SALESFORCE'),activity('SalesForceLookup').output.firstRow.Count(),'-2'))",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											},
+											"TARGETCOUNT": {
+												"value": {
+													"value": "@activity('TargetLookUp').output.firstRow.Counts",
+													"type": "Expression"
+												},
+												"type": "Int64"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"PipelineRunId": {
+						"type": "string",
+						"defaultValue": "-1"
+					},
+					"Id": {
+						"type": "string",
+						"defaultValue": "-1"
+					},
+					"RuleName": {
+						"type": "string",
+						"defaultValue": "-1"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
