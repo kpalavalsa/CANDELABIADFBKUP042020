@@ -211,6 +211,50 @@
 									"type": "DatasetReference"
 								}
 							}
+						},
+						{
+							"name": "LogSummary",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "OracleSource",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "SalesForceSource",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "TargetLookUp",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "DimLookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "FactLookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": []
 						}
 					]
 				}
