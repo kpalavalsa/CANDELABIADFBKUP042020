@@ -60,7 +60,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@equals(item().SourceServer,'Oracle')",
+									"value": "@equals(toUpper(item().SourceServer),'ORACLE')",
 									"type": "Expression"
 								},
 								"ifTrueActivities": [
@@ -100,7 +100,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@equals(item().SourceServer,'SalesForce')",
+									"value": "@equals(toUpper(item().SourceServer),'SALESFORCE')",
 									"type": "Expression"
 								},
 								"ifTrueActivities": [
