@@ -25,6 +25,26 @@
 						"type": "DatasetReference"
 					}
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "value",
+					"value": {
+						"value": "@activity('Lookup1').output.firstRow.count(id)",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"variables": {
