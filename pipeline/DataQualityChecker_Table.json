@@ -260,7 +260,7 @@
 								"storedProcedureParameters": {
 									"DIMCOUNT": {
 										"value": {
-											"value": "@activity('DimLookup').output.Counts",
+											"value": "@activity('DimLookup').output.firstRow.Counts",
 											"type": "Expression"
 										},
 										"type": "Int64"
@@ -274,7 +274,7 @@
 									},
 									"FACTCOUNT": {
 										"value": {
-											"value": "@activity('FactLookup').output.Counts",
+											"value": "@activity('FactLookup').output.firstRow.Counts",
 											"type": "Expression"
 										},
 										"type": "Int64"
@@ -288,14 +288,14 @@
 									},
 									"SourceCount": {
 										"value": {
-											"value": "@if(equals(toUpper(item().SourceServer),'ORACLE'),activity('OracleLookup').output.Counts,'-2')",
+											"value": "@if(equals(toUpper(item().SourceServer),'ORACLE'),activity('OracleLookup').output.firstRow.Counts,'-2')",
 											"type": "Expression"
 										},
 										"type": "Int64"
 									},
 									"TARGETCOUNT": {
 										"value": {
-											"value": "@activity('TargetLookUp').output.Counts",
+											"value": "@activity('TargetLookUp').output.firstRow.Counts",
 											"type": "Expression"
 										},
 										"type": "Int64"
