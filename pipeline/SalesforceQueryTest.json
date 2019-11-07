@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SalesforceSource",
-						"query": "Select Count() as Counts From OpportunityLineItem Where LastModifiedDate <= 2019-11-07T09:00:33Z ",
+						"query": "Select Count(id) total  From OpportunityLineItem Where LastModifiedDate <= 2019-11-07T09:00:33Z ",
 						"readBehavior": "query"
 					},
 					"dataset": {
