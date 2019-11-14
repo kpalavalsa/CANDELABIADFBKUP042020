@@ -139,6 +139,10 @@
 						"RunId": {
 							"value": "@pipeline().RunId",
 							"type": "Expression"
+						},
+						"DATALOADPROCESSTIME": {
+							"value": "@variables('DATALOADPROCESSTIME')",
+							"type": "Expression"
 						}
 					}
 				}
@@ -170,6 +174,10 @@
 					"parameters": {
 						"RunId": {
 							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"DATALOADPROCESSTIME": {
+							"value": "@variables('DATALOADPROCESSTIME')",
 							"type": "Expression"
 						}
 					}
