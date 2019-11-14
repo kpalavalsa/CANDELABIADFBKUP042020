@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SalesforceSource",
-						"query": "Select count() From CONTACT Where LastModifiedDate <= 2019-11-14T09:00:35Z",
+						"query": "SELECT count( DISTINCT [Type]) counts FROM SALESFORCE.CAMPAIGN O",
 						"readBehavior": "query"
 					},
 					"dataset": {
