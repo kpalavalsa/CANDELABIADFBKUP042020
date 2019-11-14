@@ -47,66 +47,6 @@
 				}
 			},
 			{
-				"name": "Set variable1_copy1",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Lookup1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "value3",
-					"value": {
-						"value": "@string(activity('Lookup1').output.firstRow)",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "index",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Lookup1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "value2",
-					"value": {
-						"value": "@string(indexof(string(activity('Lookup1').output.firstRow),':'))",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "length",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Lookup1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "value1",
-					"value": {
-						"value": "@string(length(string(activity('Lookup1').output.firstRow)))",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "Lookup2",
 				"type": "Lookup",
 				"dependsOn": [
@@ -129,7 +69,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "@concat('Select ',variables('value'),' as Counts')",
+							"value": "@concat('Select ',substring(string(activity('Lookup1').output.firstRow),add(indexof(string(activity('Lookup1').output.firstRow),':'),1),sub(sub(length(string(activity('Lookup1').output.firstRow)),indexof(string(activity('Lookup1').output.firstRow),':')),2)),' as Counts')",
 							"type": "Expression"
 						}
 					},
