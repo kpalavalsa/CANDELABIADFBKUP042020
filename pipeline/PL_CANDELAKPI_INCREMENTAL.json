@@ -449,33 +449,13 @@
 				}
 			},
 			{
-				"name": "AASPROCESSTIME",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "UPDAATEDATALOADTIME",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "AASPROCESSTIME",
-					"value": {
-						"value": "@utcnow()",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "UPDATEDAASPROCESSTIME",
 				"type": "Lookup",
 				"dependsOn": [
 					{
 						"activity": "ProcessAAS",
 						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					}
 				],
@@ -491,7 +471,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "@concat('UPDATE BI.MM_PROCESSTIMETRACKER SET AASPROCESSREFRESHTIME= ''',variables('AASPROCESSTIME'),''' where ID =1     SELECT 1')",
+							"value": "@concat('UPDATE BI.MM_PROCESSTIMETRACKER SET AASPROCESSREFRESHTIME= ''',variables('DATALOADPROCESSTIME'),''' where ID =1     SELECT 1')",
 							"type": "Expression"
 						}
 					},
@@ -504,10 +484,6 @@
 		],
 		"variables": {
 			"DATALOADPROCESSTIME": {
-				"type": "String",
-				"defaultValue": "NULL"
-			},
-			"AASPROCESSTIME": {
 				"type": "String",
 				"defaultValue": "NULL"
 			}
