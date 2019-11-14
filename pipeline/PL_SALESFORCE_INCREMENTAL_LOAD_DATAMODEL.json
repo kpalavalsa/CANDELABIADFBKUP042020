@@ -551,6 +551,39 @@
 								"referenceName": "AzureSqlDatabase",
 								"type": "LinkedServiceReference"
 							}
+						},
+						{
+							"name": "UPDATEDATALOADTIME",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Log5",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('UPDATE BI.MM_PROCESSTIMETRACKER SET DATALOADREFRESHTIME= ''',pipeline().parameters.DATALOADPROCESSTIME,''' where ID =1     SELECT 1')",
+										"type": "Expression"
+									}
+								},
+								"dataset": {
+									"referenceName": "DQTarget",
+									"type": "DatasetReference"
+								}
+							}
 						}
 					]
 				}
@@ -560,6 +593,10 @@
 			"RunId": {
 				"type": "string",
 				"defaultValue": "-1"
+			},
+			"DATALOADPROCESSTIME": {
+				"type": "string",
+				"defaultValue": "NULL"
 			}
 		},
 		"folder": {
