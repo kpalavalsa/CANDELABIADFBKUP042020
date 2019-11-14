@@ -41,7 +41,7 @@
 				"typeProperties": {
 					"variableName": "value",
 					"value": {
-						"value": "@activity('Lookup1').output.firstRow",
+						"value": "@string(activity('Lookup1').output.firstRow)",
 						"type": "Expression"
 					}
 				}
