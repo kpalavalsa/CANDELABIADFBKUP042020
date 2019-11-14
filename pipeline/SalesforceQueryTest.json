@@ -27,31 +27,11 @@
 				}
 			},
 			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Lookup1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "value",
-					"value": {
-						"value": "@substring(string(activity('Lookup1').output.firstRow),add(indexof(string(activity('Lookup1').output.firstRow),':'),1),sub(sub(length(string(activity('Lookup1').output.firstRow)),indexof(string(activity('Lookup1').output.firstRow),':')),2))",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "Lookup2",
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "Lookup1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
