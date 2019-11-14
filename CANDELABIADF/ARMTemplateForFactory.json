@@ -881,7 +881,14 @@
 					{
 						"name": "Oracle_Full_Load",
 						"type": "ExecutePipeline",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "DATALOADTIME",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
@@ -901,7 +908,14 @@
 					{
 						"name": "Oracle_Incremental_Load",
 						"type": "ExecutePipeline",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "DATALOADTIME",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
@@ -921,7 +935,14 @@
 					{
 						"name": "Salesforce_Full_Load",
 						"type": "ExecutePipeline",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "DATALOADTIME",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
@@ -941,7 +962,14 @@
 					{
 						"name": "Salesforce_Incremental_Load",
 						"type": "ExecutePipeline",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "DATALOADTIME",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
@@ -986,6 +1014,10 @@
 								"RunId": {
 									"value": "@pipeline().RunId",
 									"type": "Expression"
+								},
+								"DATALOADPROCESSTIME": {
+									"value": "@variables('DATALOADPROCESSTIME')",
+									"type": "Expression"
 								}
 							}
 						}
@@ -1017,6 +1049,10 @@
 							"parameters": {
 								"RunId": {
 									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"DATALOADPROCESSTIME": {
+									"value": "@variables('DATALOADPROCESSTIME')",
 									"type": "Expression"
 								}
 							}
@@ -1244,8 +1280,61 @@
 							"referenceName": "EmailService",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "DATALOADTIME",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "DATALOADPROCESSTIME",
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "UPDATEDAASPROCESSTIME",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('UPDATE BI.MM_PROCESSTIMETRACKER SET AASPROCESSREFRESHTIME= ''',variables('DATALOADPROCESSTIME'),''' where ID =1     SELECT 1')",
+									"type": "Expression"
+								}
+							},
+							"dataset": {
+								"referenceName": "DQTarget",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
 					}
 				],
+				"variables": {
+					"DATALOADPROCESSTIME": {
+						"type": "String",
+						"defaultValue": "NULL"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -1257,7 +1346,8 @@
 				"[concat(variables('factoryId'), '/pipelines/PL_ORACLE_INCREMENTAL_LOAD_DATAMODEL')]",
 				"[concat(variables('factoryId'), '/linkedServices/ProcessAAS')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
-				"[concat(variables('factoryId'), '/linkedServices/EmailService')]"
+				"[concat(variables('factoryId'), '/linkedServices/EmailService')]",
+				"[concat(variables('factoryId'), '/datasets/DQTarget')]"
 			]
 		},
 		{
@@ -5839,6 +5929,40 @@
 										"referenceName": "AzureSqlDatabase",
 										"type": "LinkedServiceReference"
 									}
+								},
+								{
+									"name": "UPDATEDATALOADTIME",
+									"type": "Lookup",
+									"dependsOn": [
+										{
+											"activity": "Log5",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('UPDATE BI.MM_PROCESSTIMETRACKER SET DATALOADREFRESHTIME= ''',pipeline().parameters.DATALOADPROCESSTIME,''' where ID =1     SELECT 1')",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "DQTarget",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
 								}
 							]
 						}
@@ -5848,6 +5972,10 @@
 					"RunId": {
 						"type": "string",
 						"defaultValue": "-1"
+					},
+					"DATALOADPROCESSTIME": {
+						"type": "string",
+						"defaultValue": "NULL"
 					}
 				},
 				"folder": {
@@ -5857,7 +5985,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CheckErrors')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
+				"[concat(variables('factoryId'), '/datasets/DQTarget')]"
 			]
 		},
 		{
@@ -8400,6 +8529,40 @@
 										"referenceName": "AzureSqlDatabase",
 										"type": "LinkedServiceReference"
 									}
+								},
+								{
+									"name": "UPDATEDATALOADTIME",
+									"type": "Lookup",
+									"dependsOn": [
+										{
+											"activity": "Log5",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('UPDATE BI.MM_PROCESSTIMETRACKER SET DATALOADREFRESHTIME= ''',pipeline().parameters.DATALOADPROCESSTIME,''' where ID =1     SELECT 1')",
+												"type": "Expression"
+											}
+										},
+										"dataset": {
+											"referenceName": "DQTarget",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
 								}
 							]
 						}
@@ -8409,6 +8572,10 @@
 					"RunId": {
 						"type": "string",
 						"defaultValue": "-1"
+					},
+					"DATALOADPROCESSTIME": {
+						"type": "string",
+						"defaultValue": "NULL"
 					}
 				},
 				"folder": {
@@ -8418,7 +8585,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CheckErrors')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
+				"[concat(variables('factoryId'), '/datasets/DQTarget')]"
 			]
 		},
 		{
@@ -9254,7 +9422,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SalesforceSource",
-								"query": "Select Count(id)   total  From OpportunityLineItem Where LastModifiedDate <= 2019-11-07T09:00:33Z ",
+								"query": "Select count() From CONTACT Where LastModifiedDate <= 2019-11-14T09:00:35Z",
 								"readBehavior": "query"
 							},
 							"dataset": {
