@@ -130,6 +130,39 @@
 												"type": "DatasetReference"
 											}
 										}
+									},
+									{
+										"name": "SalesForceOutput",
+										"type": "Lookup",
+										"dependsOn": [
+											{
+												"activity": "SalesForceLookup",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderQuery": {
+													"value": "@concat('Select ',substring(string(activity('SalesForceLookup').output.firstRow),add(indexof(string(activity('SalesForceLookup').output.firstRow),':'),1),sub(sub(length(string(activity('SalesForceLookup').output.firstRow)),indexof(string(activity('SalesForceLookup').output.firstRow),':')),2)),' as Counts')",
+													"type": "Expression"
+												}
+											},
+											"dataset": {
+												"referenceName": "DQTarget",
+												"type": "DatasetReference"
+											}
+										}
 									}
 								]
 							}
