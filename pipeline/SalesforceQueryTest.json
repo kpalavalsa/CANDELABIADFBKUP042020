@@ -41,7 +41,7 @@
 				"typeProperties": {
 					"variableName": "value",
 					"value": {
-						"value": "@string(activity('Lookup1').output.firstRow)",
+						"value": "@substring(string(activity('Lookup1').output.firstRow),indexof(string(activity('Lookup1').output.firstRow),':'),sub(sub(length(string(activity('Lookup1').output.firstRow)),indexof(string(activity('Lookup1').output.firstRow),':')),-2))",
 						"type": "Expression"
 					}
 				}
