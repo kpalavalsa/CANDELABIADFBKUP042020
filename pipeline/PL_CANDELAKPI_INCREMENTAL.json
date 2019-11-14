@@ -418,45 +418,6 @@
 				}
 			},
 			{
-				"name": "UPDAATEDATALOADTIME",
-				"type": "Lookup",
-				"dependsOn": [
-					{
-						"activity": "Oracle_DataModel",
-						"dependencyConditions": [
-							"Completed"
-						]
-					},
-					{
-						"activity": "SalesForce_DataModel",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "AzureSqlSource",
-						"sqlReaderQuery": {
-							"value": "@concat('UPDATE BI.MM_PROCESSTIMETRACKER SET DATALOADREFRESHTIME = ''',variables('DATALOADPROCESSTIME'),''' where ID =1    SELECT 1')",
-							"type": "Expression"
-						}
-					},
-					"dataset": {
-						"referenceName": "DQTarget",
-						"type": "DatasetReference"
-					}
-				}
-			},
-			{
 				"name": "UPDATEDAASPROCESSTIME",
 				"type": "Lookup",
 				"dependsOn": [
