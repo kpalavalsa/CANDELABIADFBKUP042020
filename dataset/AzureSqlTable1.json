@@ -2,7 +2,7 @@
 	"name": "AzureSqlTable1",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "DataControlMaster",
+			"referenceName": "AzureSqlDatabase",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -718,8 +718,8 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "dbo",
-			"table": "OE_ORDER_HEADERS_ALL"
+			"schema": "TEST1",
+			"table": "ACCOUNT"
 		}
 	}
 }
