@@ -17,8 +17,8 @@
 				"typeProperties": {
 					"source": {
 						"type": "SalesforceSource",
-						"query": "SELECT count( DISTINCT [Type]) counts FROM SALESFORCE.CAMPAIGN O",
-						"readBehavior": "query"
+						"query": "Select Count() From ACCOUNT  ",
+						"readBehavior": "queryAll"
 					},
 					"dataset": {
 						"referenceName": "Salesforce_Source",
@@ -58,6 +58,42 @@
 						"type": "DatasetReference"
 					}
 				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SalesforceSource",
+						"query": "select * from account",
+						"readBehavior": "queryAll"
+					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Salesforce_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"variables": {
