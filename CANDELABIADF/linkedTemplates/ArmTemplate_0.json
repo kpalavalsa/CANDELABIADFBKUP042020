@@ -27,6 +27,10 @@
 			"type": "string",
 			"defaultValue": "https://candelabiadls.dfs.core.windows.net"
 		},
+		"Salesforce_properties_typeProperties_environmentUrl": {
+			"type": "string",
+			"defaultValue": "https://candelamedical.my.salesforce.com"
+		},
 		"Salesforce_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "azureapi@candelamedical.com"
@@ -180,7 +184,7 @@
 				"annotations": [],
 				"type": "Salesforce",
 				"typeProperties": {
-					"environmentUrl": "https://candelamedical.my.salesforce.com",
+					"environmentUrl": "[parameters('Salesforce_properties_typeProperties_environmentUrl')]",
 					"username": "[parameters('Salesforce_properties_typeProperties_username')]",
 					"password": {
 						"type": "AzureKeyVaultSecret",

@@ -35,6 +35,10 @@
 			"type": "string",
 			"defaultValue": "https://candelabiadls.dfs.core.windows.net"
 		},
+		"Salesforce_properties_typeProperties_environmentUrl": {
+			"type": "string",
+			"defaultValue": "https://candelamedical.my.salesforce.com"
+		},
 		"Salesforce_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "azureapi@candelamedical.com"
@@ -274,6 +278,40 @@
 														"parameters": {}
 													}
 												}
+											},
+											{
+												"name": "SalesForceOutput",
+												"type": "Lookup",
+												"dependsOn": [
+													{
+														"activity": "SalesForceLookup",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "AzureSqlSource",
+														"sqlReaderQuery": {
+															"value": "@concat('Select ',substring(string(activity('SalesForceLookup').output.firstRow),add(indexof(string(activity('SalesForceLookup').output.firstRow),':'),1),sub(sub(length(string(activity('SalesForceLookup').output.firstRow)),indexof(string(activity('SalesForceLookup').output.firstRow),':')),2)),' as Counts')",
+															"type": "Expression"
+														}
+													},
+													"dataset": {
+														"referenceName": "DQTarget",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												}
 											}
 										]
 									}
@@ -435,7 +473,7 @@
 											},
 											"SourceCount": {
 												"value": {
-													"value": "@if(equals(toUpper(item().SourceServer),'ORACLE'),activity('OracleLookup').output.firstRow.Counts,'-2')",
+													"value": "@if(equals(toUpper(item().SourceServer),'ORACLE'),activity('OracleLookup').output.firstRow.Counts,activity('SalesForceOutput').output.firstRow.Counts)",
 													"type": "Expression"
 												},
 												"type": "Int64"
@@ -9422,11 +9460,45 @@
 						"typeProperties": {
 							"source": {
 								"type": "SalesforceSource",
-								"query": "Select count() From CONTACT Where LastModifiedDate <= 2019-11-14T09:00:35Z",
+								"query": "SELECT count( DISTINCT [Type]) counts FROM SALESFORCE.CAMPAIGN O",
 								"readBehavior": "query"
 							},
 							"dataset": {
 								"referenceName": "Salesforce_Source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Lookup2",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('Select ',substring(string(activity('Lookup1').output.firstRow),add(indexof(string(activity('Lookup1').output.firstRow),':'),1),sub(sub(length(string(activity('Lookup1').output.firstRow)),indexof(string(activity('Lookup1').output.firstRow),':')),2)),' as Counts')",
+									"type": "Expression"
+								}
+							},
+							"dataset": {
+								"referenceName": "DQTarget",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -9437,6 +9509,18 @@
 					"value": {
 						"type": "String",
 						"defaultValue": "-1"
+					},
+					"value1": {
+						"type": "String",
+						"defaultValue": "-1"
+					},
+					"value2": {
+						"type": "String",
+						"defaultValue": "-1"
+					},
+					"value3": {
+						"type": "String",
+						"defaultValue": "-1"
 					}
 				},
 				"folder": {
@@ -9445,7 +9529,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Salesforce_Source')]"
+				"[concat(variables('factoryId'), '/datasets/Salesforce_Source')]",
+				"[concat(variables('factoryId'), '/datasets/DQTarget')]"
 			]
 		},
 		{
@@ -10669,7 +10754,7 @@
 				"annotations": [],
 				"type": "Salesforce",
 				"typeProperties": {
-					"environmentUrl": "https://candelamedical.my.salesforce.com",
+					"environmentUrl": "[parameters('Salesforce_properties_typeProperties_environmentUrl')]",
 					"username": "[parameters('Salesforce_properties_typeProperties_username')]",
 					"password": {
 						"type": "AzureKeyVaultSecret",

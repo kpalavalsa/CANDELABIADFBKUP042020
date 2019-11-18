@@ -35,6 +35,10 @@
 			"type": "string",
 			"defaultValue": "https://candelabiadls.dfs.core.windows.net"
 		},
+		"Salesforce_properties_typeProperties_environmentUrl": {
+			"type": "string",
+			"defaultValue": "https://candelamedical.my.salesforce.com"
+		},
 		"Salesforce_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "azureapi@candelamedical.com"
@@ -80,6 +84,9 @@
 					},
 					"DataLakeStorage_properties_typeProperties_url": {
 						"value": "[parameters('DataLakeStorage_properties_typeProperties_url')]"
+					},
+					"Salesforce_properties_typeProperties_environmentUrl": {
+						"value": "[parameters('Salesforce_properties_typeProperties_environmentUrl')]"
 					},
 					"Salesforce_properties_typeProperties_username": {
 						"value": "[parameters('Salesforce_properties_typeProperties_username')]"
