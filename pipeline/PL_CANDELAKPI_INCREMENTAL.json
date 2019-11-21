@@ -371,6 +371,32 @@
 						"type": "DatasetReference"
 					}
 				}
+			},
+			{
+				"name": "DQVALIDATION",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ProcessAAS",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "DataQualityChecker_Rule",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PipelineRunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
+					}
+				}
 			}
 		],
 		"variables": {
