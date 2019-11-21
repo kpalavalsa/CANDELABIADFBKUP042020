@@ -9390,7 +9390,7 @@
 							{
 								"activity": "ProcessAAS",
 								"dependencyConditions": [
-									"Failed"
+									"Completed"
 								]
 							}
 						],
@@ -9401,7 +9401,12 @@
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
-							"parameters": {}
+							"parameters": {
+								"PipelineRunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
 						}
 					}
 				],
