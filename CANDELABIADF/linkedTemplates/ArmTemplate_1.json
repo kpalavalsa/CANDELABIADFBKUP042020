@@ -8034,8 +8034,8 @@
 						"typeProperties": {
 							"source": {
 								"type": "SalesforceSource",
-								"query": "SELECT count( DISTINCT [Type]) counts FROM SALESFORCE.CAMPAIGN O",
-								"readBehavior": "query"
+								"query": "Select Count() From ACCOUNT  ",
+								"readBehavior": "queryAll"
 							},
 							"dataset": {
 								"referenceName": "Salesforce_Source",
@@ -8077,6 +8077,44 @@
 								"parameters": {}
 							}
 						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SalesforceSource",
+								"query": "select * from account",
+								"readBehavior": "queryAll"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Salesforce_Source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"variables": {
@@ -8583,481 +8621,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_CANDELAKPI_INCREMENTAL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Combination of Oracle and Salesforce data load",
-				"activities": [
-					{
-						"name": "Oracle_Full_Load",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "DATALOADTIME",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_FULL_ORACLE_AZSQLDB",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"LoadType": "Full"
-							}
-						}
-					},
-					{
-						"name": "Oracle_Incremental_Load",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "DATALOADTIME",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_INCREMENTAL_ORACLE_AZSQLDB",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"LoadType": "Incremental"
-							}
-						}
-					},
-					{
-						"name": "Salesforce_Full_Load",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "DATALOADTIME",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_SALESFORCE_AZSQLDB_FULL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"LoadType": "Full"
-							}
-						}
-					},
-					{
-						"name": "Salesforce_Incremental_Load",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "DATALOADTIME",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_INCREMENTAL_SALESFORCE_AZSSQLDB",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"LoadType": "Incremental"
-							}
-						}
-					},
-					{
-						"name": "SalesForce_DataModel",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Salesforce_Incremental_Load",
-								"dependencyConditions": [
-									"Completed"
-								]
-							},
-							{
-								"activity": "Salesforce_Full_Load",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_SALESFORCE_INCREMENTAL_LOAD_DATAMODEL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"DATALOADPROCESSTIME": {
-									"value": "@variables('DATALOADPROCESSTIME')",
-									"type": "Expression"
-								}
-							}
-						}
-					},
-					{
-						"name": "Oracle_DataModel",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Oracle_Incremental_Load",
-								"dependencyConditions": [
-									"Completed"
-								]
-							},
-							{
-								"activity": "Oracle_Full_Load",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "PL_ORACLE_INCREMENTAL_LOAD_DATAMODEL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"RunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								},
-								"DATALOADPROCESSTIME": {
-									"value": "@variables('DATALOADPROCESSTIME')",
-									"type": "Expression"
-								}
-							}
-						}
-					},
-					{
-						"name": "ProcessAAS",
-						"type": "AzureFunctionActivity",
-						"dependsOn": [
-							{
-								"activity": "SalesForce_DataModel",
-								"dependencyConditions": [
-									"Completed"
-								]
-							},
-							{
-								"activity": "Oracle_DataModel",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 3,
-							"retryIntervalInSeconds": 60,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"functionName": {
-								"value": "@concat('PROCESSAAS?modelname=','CANDELAKPI&ProcessName=',pipeline().Pipeline,'&RunId=',pipeline().RunId)",
-								"type": "Expression"
-							},
-							"method": "GET",
-							"headers": {}
-						},
-						"linkedServiceName": {
-							"referenceName": "ProcessAAS",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Log31",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "ProcessAAS",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[BI].[SP_M_Logger]",
-							"storedProcedureParameters": {
-								"CopyDuration": {
-									"value": null,
-									"type": "Int64"
-								},
-								"ErrorInfo": {
-									"value": null,
-									"type": "String"
-								},
-								"LOGSPATH": {
-									"value": null,
-									"type": "String"
-								},
-								"ProcessName": {
-									"value": {
-										"value": "@pipeline().Pipeline",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"RecordsCopiedToDest": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RecordsInSource": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RunId": {
-									"value": {
-										"value": "@pipeline().RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"SkippedRecordsToMove": {
-									"value": null,
-									"type": "Int64"
-								},
-								"Status": {
-									"value": "INFO",
-									"type": "String"
-								},
-								"Summary": {
-									"value": "Processing AAS Model is completed successfully",
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Log32",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "ProcessAAS",
-								"dependencyConditions": [
-									"Failed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[BI].[SP_M_Logger]",
-							"storedProcedureParameters": {
-								"CopyDuration": {
-									"value": null,
-									"type": "Int64"
-								},
-								"ErrorInfo": {
-									"value": {
-										"value": "@substring(activity('ProcessAAS').Error.Message,0,if(greater(length(activity('ProcessAAS').Error.Message),1990),1990,sub(length(activity('ProcessAAS').Error.Message),2)))",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"LOGSPATH": {
-									"value": null,
-									"type": "String"
-								},
-								"ProcessName": {
-									"value": {
-										"value": "@pipeline().Pipeline",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"RecordsCopiedToDest": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RecordsInSource": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RunId": {
-									"value": {
-										"value": "@pipeline().RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"SkippedRecordsToMove": {
-									"value": null,
-									"type": "Int64"
-								},
-								"Status": {
-									"value": "ERROR",
-									"type": "String"
-								},
-								"Summary": {
-									"value": "Failed to Process AAS Model",
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "EmailNotification",
-						"type": "AzureFunctionActivity",
-						"dependsOn": [
-							{
-								"activity": "ProcessAAS",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"functionName": {
-								"value": "@concat('SendEmail?RunId=',pipeline().RunId,'&ProcessName=',pipeline().Pipeline)",
-								"type": "Expression"
-							},
-							"method": "GET",
-							"headers": {}
-						},
-						"linkedServiceName": {
-							"referenceName": "EmailService",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "DATALOADTIME",
-						"type": "SetVariable",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "DATALOADPROCESSTIME",
-							"value": {
-								"value": "@utcnow()",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "UPDATEDAASPROCESSTIME",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "ProcessAAS",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": {
-									"value": "@concat('UPDATE BI.MM_PROCESSTIMETRACKER SET AASPROCESSREFRESHTIME= ''',variables('DATALOADPROCESSTIME'),''' where ID =1     SELECT 1')",
-									"type": "Expression"
-								}
-							},
-							"dataset": {
-								"referenceName": "DQTarget",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					}
-				],
-				"variables": {
-					"DATALOADPROCESSTIME": {
-						"type": "String",
-						"defaultValue": "NULL"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_FULL_ORACLE_AZSQLDB')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_INCREMENTAL_ORACLE_AZSQLDB')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_AZSQLDB_FULL')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_INCREMENTAL_SALESFORCE_AZSSQLDB')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_INCREMENTAL_LOAD_DATAMODEL')]",
-				"[concat(variables('factoryId'), '/pipelines/PL_ORACLE_INCREMENTAL_LOAD_DATAMODEL')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/PL_ORACLE_MAIN_FULL')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -9439,6 +9002,425 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/PL_INCREMENTAL_SALESFORCE_AZSSQLDB')]",
 				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_LOAD_DATAMODEL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_CANDELAKPI_INCREMENTAL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Combination of Oracle and Salesforce data load",
+				"activities": [
+					{
+						"name": "Oracle_Full_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "DATALOADTIME",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_FULL_ORACLE_AZSQLDB",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Full"
+							}
+						}
+					},
+					{
+						"name": "Oracle_Incremental_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "DATALOADTIME",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_INCREMENTAL_ORACLE_AZSQLDB",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Incremental"
+							}
+						}
+					},
+					{
+						"name": "Salesforce_Full_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "DATALOADTIME",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_SALESFORCE_AZSQLDB_FULL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Full"
+							}
+						}
+					},
+					{
+						"name": "Salesforce_Incremental_Load",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "DATALOADTIME",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_INCREMENTAL_SALESFORCE_AZSSQLDB",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"LoadType": "Incremental"
+							}
+						}
+					},
+					{
+						"name": "SalesForce_DataModel",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Salesforce_Incremental_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "Salesforce_Full_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_SALESFORCE_INCREMENTAL_LOAD_DATAMODEL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"DATALOADPROCESSTIME": {
+									"value": "@variables('DATALOADPROCESSTIME')",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Oracle_DataModel",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Oracle_Incremental_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "Oracle_Full_Load",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_ORACLE_INCREMENTAL_LOAD_DATAMODEL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"RunId": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								},
+								"DATALOADPROCESSTIME": {
+									"value": "@variables('DATALOADPROCESSTIME')",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "ProcessAAS",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [
+							{
+								"activity": "SalesForce_DataModel",
+								"dependencyConditions": [
+									"Completed"
+								]
+							},
+							{
+								"activity": "Oracle_DataModel",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 3,
+							"retryIntervalInSeconds": 60,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": {
+								"value": "@concat('PROCESSAAS?modelname=','CANDELAKPI&ProcessName=',pipeline().Pipeline,'&RunId=',pipeline().RunId)",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {}
+						},
+						"linkedServiceName": {
+							"referenceName": "ProcessAAS",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Log31",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[BI].[SP_M_Logger]",
+							"storedProcedureParameters": {
+								"CopyDuration": {
+									"value": null,
+									"type": "Int64"
+								},
+								"ErrorInfo": {
+									"value": null,
+									"type": "String"
+								},
+								"LOGSPATH": {
+									"value": null,
+									"type": "String"
+								},
+								"ProcessName": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RecordsCopiedToDest": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RecordsInSource": {
+									"value": null,
+									"type": "Int64"
+								},
+								"RunId": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"SkippedRecordsToMove": {
+									"value": null,
+									"type": "Int64"
+								},
+								"Status": {
+									"value": "INFO",
+									"type": "String"
+								},
+								"Summary": {
+									"value": "Processing AAS Model is completed successfully",
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "EmailNotification",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": {
+								"value": "@concat('SendEmail?RunId=',pipeline().RunId,'&ProcessName=',pipeline().Pipeline)",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {}
+						},
+						"linkedServiceName": {
+							"referenceName": "EmailService",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "DATALOADTIME",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "DATALOADPROCESSTIME",
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "UPDATEDAASPROCESSTIME",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('UPDATE BI.MM_PROCESSTIMETRACKER SET AASPROCESSREFRESHTIME= ''',variables('DATALOADPROCESSTIME'),''' where ID =1     SELECT 1')",
+									"type": "Expression"
+								}
+							},
+							"dataset": {
+								"referenceName": "DQTarget",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "DQVALIDATION",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "DataQualityChecker_Rule",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"variables": {
+					"DATALOADPROCESSTIME": {
+						"type": "String",
+						"defaultValue": "NULL"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PL_FULL_ORACLE_AZSQLDB')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_INCREMENTAL_ORACLE_AZSQLDB')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_AZSQLDB_FULL')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_INCREMENTAL_SALESFORCE_AZSSQLDB')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_SALESFORCE_INCREMENTAL_LOAD_DATAMODEL')]",
+				"[concat(variables('factoryId'), '/pipelines/PL_ORACLE_INCREMENTAL_LOAD_DATAMODEL')]",
+				"[concat(variables('factoryId'), '/pipelines/DataQualityChecker_Rule')]"
 			]
 		},
 		{

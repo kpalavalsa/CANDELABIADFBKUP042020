@@ -1210,84 +1210,6 @@
 						}
 					},
 					{
-						"name": "Log32",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "ProcessAAS",
-								"dependencyConditions": [
-									"Failed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[BI].[SP_M_Logger]",
-							"storedProcedureParameters": {
-								"CopyDuration": {
-									"value": null,
-									"type": "Int64"
-								},
-								"ErrorInfo": {
-									"value": {
-										"value": "@substring(activity('ProcessAAS').Error.Message,0,if(greater(length(activity('ProcessAAS').Error.Message),1990),1990,sub(length(activity('ProcessAAS').Error.Message),2)))",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"LOGSPATH": {
-									"value": null,
-									"type": "String"
-								},
-								"ProcessName": {
-									"value": {
-										"value": "@pipeline().Pipeline",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"RecordsCopiedToDest": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RecordsInSource": {
-									"value": null,
-									"type": "Int64"
-								},
-								"RunId": {
-									"value": {
-										"value": "@pipeline().RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"SkippedRecordsToMove": {
-									"value": null,
-									"type": "Int64"
-								},
-								"Status": {
-									"value": "ERROR",
-									"type": "String"
-								},
-								"Summary": {
-									"value": "Failed to Process AAS Model",
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
 						"name": "EmailNotification",
 						"type": "AzureFunctionActivity",
 						"dependsOn": [
@@ -1365,6 +1287,27 @@
 								"parameters": {}
 							}
 						}
+					},
+					{
+						"name": "DQVALIDATION",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ProcessAAS",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "DataQualityChecker_Rule",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
 					}
 				],
 				"variables": {
@@ -1385,7 +1328,8 @@
 				"[concat(variables('factoryId'), '/linkedServices/ProcessAAS')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]",
 				"[concat(variables('factoryId'), '/linkedServices/EmailService')]",
-				"[concat(variables('factoryId'), '/datasets/DQTarget')]"
+				"[concat(variables('factoryId'), '/datasets/DQTarget')]",
+				"[concat(variables('factoryId'), '/pipelines/DataQualityChecker_Rule')]"
 			]
 		},
 		{
@@ -9460,8 +9404,8 @@
 						"typeProperties": {
 							"source": {
 								"type": "SalesforceSource",
-								"query": "SELECT count( DISTINCT [Type]) counts FROM SALESFORCE.CAMPAIGN O",
-								"readBehavior": "query"
+								"query": "Select Count() From ACCOUNT  ",
+								"readBehavior": "queryAll"
 							},
 							"dataset": {
 								"referenceName": "Salesforce_Source",
@@ -9503,6 +9447,44 @@
 								"parameters": {}
 							}
 						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SalesforceSource",
+								"query": "select * from account",
+								"readBehavior": "queryAll"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Salesforce_Source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"variables": {
@@ -9530,7 +9512,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Salesforce_Source')]",
-				"[concat(variables('factoryId'), '/datasets/DQTarget')]"
+				"[concat(variables('factoryId'), '/datasets/DQTarget')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]"
 			]
 		},
 		{
@@ -9635,7 +9618,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "DataControlMaster",
+					"referenceName": "AzureSqlDatabase",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -10351,12 +10334,12 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "dbo",
-					"table": "OE_ORDER_HEADERS_ALL"
+					"schema": "TEST1",
+					"table": "ACCOUNT"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DataControlMaster')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
 			]
 		},
 		{
