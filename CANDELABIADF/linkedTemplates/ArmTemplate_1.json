@@ -153,7 +153,7 @@
 													"source": {
 														"type": "AzureSqlSource",
 														"sqlReaderQuery": {
-															"value": "@item().SourceExpression",
+															"value": "@if(empty(item().SourceExpression),'SELECT -1 As Counts from Dual',item().SourceExpression)",
 															"type": "Expression"
 														}
 													},
@@ -194,7 +194,7 @@
 													"source": {
 														"type": "SalesforceSource",
 														"query": {
-															"value": "@item().SourceExpression",
+															"value": "@if(empty(item().SourceExpression),'SELECT -1 As Counts',item().SourceExpression)",
 															"type": "Expression"
 														},
 														"readBehavior": "query"
@@ -259,7 +259,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@if(equals(item().TargetExpression,'NULL'),'SELECT NULL',item().TargetExpression)",
+												"value": "@if(empty(item().TargetExpression),'SELECT -1 As Counts',item().TargetExpression)",
 												"type": "Expression"
 											}
 										},
