@@ -226,7 +226,7 @@
 													"source": {
 														"type": "AzureSqlSource",
 														"sqlReaderQuery": {
-															"value": "@item().SourceExpression",
+															"value": "@if(equals(item().SourceExpression,'NULL'),'SELECT NULL ',item().SourceExpression)",
 															"type": "Expression"
 														}
 													},
@@ -267,7 +267,7 @@
 													"source": {
 														"type": "SalesforceSource",
 														"query": {
-															"value": "@item().SourceExpression",
+															"value": "@if(equals(item().SourceExpression,'NULL'),'SELECT NULL',item().SourceExpression)",
 															"type": "Expression"
 														},
 														"readBehavior": "queryAll"
