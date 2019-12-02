@@ -80,7 +80,7 @@
 											"source": {
 												"type": "AzureSqlSource",
 												"sqlReaderQuery": {
-													"value": "@if(equals(item().SourceExpression,'NULL'),'SELECT NULL FROM DUAL',item().SourceExpression)",
+													"value": "@if(equals(item().SourceExpression,'NULL'),'SELECT NULL ',item().SourceExpression)",
 													"type": "Expression"
 												}
 											},
