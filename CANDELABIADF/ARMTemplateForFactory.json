@@ -226,7 +226,7 @@
 													"source": {
 														"type": "AzureSqlSource",
 														"sqlReaderQuery": {
-															"value": "@if(equals(item().SourceExpression,'NULL'),'SELECT NULL ',item().SourceExpression)",
+															"value": "@if(empty(item().SourceExpression),'SELECT -1 As Counts ',item().SourceExpression)",
 															"type": "Expression"
 														}
 													},
@@ -267,7 +267,7 @@
 													"source": {
 														"type": "SalesforceSource",
 														"query": {
-															"value": "@if(equals(item().SourceExpression,'NULL'),'SELECT NULL',item().SourceExpression)",
+															"value": "@if(empty(item().SourceExpression),'SELECT NULL',item().SourceExpression)",
 															"type": "Expression"
 														},
 														"readBehavior": "queryAll"
@@ -332,7 +332,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@if(equals(item().TargetExpression,'NULL'),'SELECT NULL',item().TargetExpression)",
+												"value": "@if(empty(item().TargetExpression),'SELECT -1 as counts',item().TargetExpression)",
 												"type": "Expression"
 											}
 										},
