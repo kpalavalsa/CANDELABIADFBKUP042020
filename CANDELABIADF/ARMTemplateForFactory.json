@@ -9368,7 +9368,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"functionName": {
-								"value": "@concat('PROCESSAAS?modelname=','CANDELAKPI&ProcessName=',pipeline().Pipeline,'&RunId=',pipeline().RunId)",
+								"value": "@concat('PROCESSAAS?modelname=','EngagementKPI&ProcessName=',pipeline().Pipeline,'&RunId=',pipeline().RunId)",
 								"type": "Expression"
 							},
 							"method": "GET",
