@@ -96,7 +96,6 @@
 								"value": "@activity('List the Rules').output.Value",
 								"type": "Expression"
 							},
-							"isSequential": false,
 							"activities": [
 								{
 									"name": "DataQualityTable",
@@ -8186,7 +8185,7 @@
 									}
 								},
 								{
-									"name": "Log3",
+									"name": "Incremental_Load_Dimension_Success_Log",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
@@ -8261,7 +8260,7 @@
 									}
 								},
 								{
-									"name": "Log4",
+									"name": "Incremental_Load_Dimension_Failure_Log",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
@@ -8339,11 +8338,11 @@
 									}
 								},
 								{
-									"name": "Load_Facts",
+									"name": "Load_Fact_Engagement",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
-											"activity": "Log3",
+											"activity": "Incremental_Load_Dimension_Success_Log",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -8366,11 +8365,11 @@
 									}
 								},
 								{
-									"name": "Log5",
+									"name": "Fact_Engagement_Success_Log",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
-											"activity": "Load_Facts",
+											"activity": "Load_Fact_Engagement",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -8441,11 +8440,11 @@
 									}
 								},
 								{
-									"name": "Log6",
+									"name": "Fact_Engagement_Failure_Log",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
-											"activity": "Load_Facts",
+											"activity": "Load_Fact_Engagement",
 											"dependencyConditions": [
 												"Failed"
 											]
@@ -8468,7 +8467,7 @@
 											},
 											"ErrorInfo": {
 												"value": {
-													"value": "@substring(activity('Load_Facts').Error.Message,0,if(greater(length(activity('Load_Facts').Error.Message),1990),1990,sub(length(activity('Load_Facts').Error.Message),2)))",
+													"value": "@substring(activity('Load_Fact_Engagement').Error.Message,0,if(greater(length(activity('Load_Fact_Engagement').Error.Message),1990),1990,sub(length(activity('Load_Fact_Engagement').Error.Message),2)))",
 													"type": "Expression"
 												},
 												"type": "String"
@@ -8523,7 +8522,7 @@
 									"type": "Lookup",
 									"dependsOn": [
 										{
-											"activity": "Log5",
+											"activity": "Fact_Engagement_Success_Log",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -8550,6 +8549,186 @@
 											"type": "DatasetReference",
 											"parameters": {}
 										}
+									}
+								},
+								{
+									"name": "Load_Facts_Bizible_Attribution",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Incremental_Load_Dimension_Success_Log",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[salesforce].[SP_M_FULL_LOAD_Fact_Bizible_Attribution]"
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Bizible_attribution_Success_Log",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Load_Facts_Bizible_Attribution",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": null,
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "INFO",
+												"type": "String"
+											},
+											"Summary": {
+												"value": "Loading Bizible_Attribution_Fact tables are completed successfully",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Bizible_Attribution_Failure_Log",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Load_Facts_Bizible_Attribution",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": {
+													"value": "@substring(activity('Load_Facts_Bizible_Attribution').Error.Message,0,if(greater(length(activity('Load_Facts_Bizible_Attribution').Error.Message),1990),1990,sub(length(activity('Load_Facts_Bizible_Attribution').Error.Message),2)))",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "ERROR",
+												"type": "String"
+											},
+											"Summary": {
+												"value": "Failed to Load Fact Tables",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
 									}
 								}
 							]
