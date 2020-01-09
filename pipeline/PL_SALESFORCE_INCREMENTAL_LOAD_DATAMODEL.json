@@ -502,7 +502,7 @@
 									},
 									"ErrorInfo": {
 										"value": {
-											"value": "@substring(activity('Load_Facts').Error.Message,0,if(greater(length(activity('Load_Facts').Error.Message),1990),1990,sub(length(activity('Load_Facts').Error.Message),2)))",
+											"value": "@substring(activity('Load_Fact_Engagement').Error.Message,0,if(greater(length(activity('Load_Fact_Engagement').Error.Message),1990),1990,sub(length(activity('Load_Fact_Engagement').Error.Message),2)))",
 											"type": "Expression"
 										},
 										"type": "String"
