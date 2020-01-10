@@ -605,7 +605,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[salesforce].[SP_M_FULL_LOAD_Fact_Bizible_Attribution]"
+								"storedProcedureName": "[salesforce].SP_M_INCREMENTAL_LOAD_Fact_Bizible_Attribution"
 							},
 							"linkedServiceName": {
 								"referenceName": "AzureSqlDatabase",
