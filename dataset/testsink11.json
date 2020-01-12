@@ -1,0 +1,69 @@
+{
+	"name": "testsink11",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "FROM_CURRENCY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TO_CURRENCY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONVERSION_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONVERSION_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONVERSION_RATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATUS_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATION_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_BY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LAST_UPDATE_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LAST_UPDATED_BY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LAST_UPDATE_LOGIN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTEXT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RATE_SOURCE_CODE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "ORACLE",
+			"table": "GL_DAILY_RATES"
+		}
+	}
+}
