@@ -1,0 +1,222 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "UserRole",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SalesforceSource",
+						"query": "select CaseAccessForAccountOwner,ContactAccessForAccountOwner,DeveloperName,ForecastUserId,Id,LastModifiedById,LastModifiedDate,MayForecastManagerShare,Name,OpportunityAccessForAccountOwner,ParentRoleId,PortalAccountId,PortalAccountOwnerId,PortalRole,PortalType,RollupDescription,SystemModstamp from UserRole",
+						"readBehavior": "query"
+					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ParentRoleId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ParentRoleId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RollupDescription",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RollupDescription",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OpportunityAccessForAccountOwner",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OpportunityAccessForAccountOwner",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CaseAccessForAccountOwner",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CaseAccessForAccountOwner",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ContactAccessForAccountOwner",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ContactAccessForAccountOwner",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ForecastUserId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ForecastUserId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MayForecastManagerShare",
+									"type": "Boolean"
+								},
+								"sink": {
+									"name": "MayForecastManagerShare",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedDate",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "LastModifiedDate",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedById",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastModifiedById",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SystemModstamp",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "SystemModstamp",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "DeveloperName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DeveloperName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PortalAccountId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PortalAccountId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PortalType",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PortalType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PortalRole",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PortalRole",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PortalAccountOwnerId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PortalAccountOwnerId",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Salesforce_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureSQLCandelaKPI",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Test"
+		},
+		"annotations": []
+	}
+}
