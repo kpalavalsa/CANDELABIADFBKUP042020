@@ -29,56 +29,6 @@
 						"mappings": [
 							{
 								"source": {
-									"name": "Id",
-									"type": "String"
-								},
-								"sink": {
-									"name": "Id",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "Name",
-									"type": "String"
-								},
-								"sink": {
-									"name": "Name",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "ParentRoleId",
-									"type": "String"
-								},
-								"sink": {
-									"name": "ParentRoleId",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "RollupDescription",
-									"type": "String"
-								},
-								"sink": {
-									"name": "RollupDescription",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "OpportunityAccessForAccountOwner",
-									"type": "String"
-								},
-								"sink": {
-									"name": "OpportunityAccessForAccountOwner",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
 									"name": "CaseAccessForAccountOwner",
 									"type": "String"
 								},
@@ -99,12 +49,52 @@
 							},
 							{
 								"source": {
+									"name": "DeveloperName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DeveloperName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
 									"name": "ForecastUserId",
 									"type": "String"
 								},
 								"sink": {
 									"name": "ForecastUserId",
 									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedById",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastModifiedById",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedDate",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "LastModifiedDate",
+									"type": "DateTime"
 								}
 							},
 							{
@@ -119,41 +109,31 @@
 							},
 							{
 								"source": {
-									"name": "LastModifiedDate",
-									"type": "DateTime"
-								},
-								"sink": {
-									"name": "LastModifiedDate",
-									"type": "DateTime"
-								}
-							},
-							{
-								"source": {
-									"name": "LastModifiedById",
+									"name": "Name",
 									"type": "String"
 								},
 								"sink": {
-									"name": "LastModifiedById",
+									"name": "MayForecastManagerShare",
 									"type": "String"
 								}
 							},
 							{
 								"source": {
-									"name": "SystemModstamp",
-									"type": "DateTime"
+									"name": "OpportunityAccessForAccountOwner",
+									"type": "String"
 								},
 								"sink": {
-									"name": "SystemModstamp",
-									"type": "DateTime"
+									"name": "OpportunityAccessForAccountOwner",
+									"type": "String"
 								}
 							},
 							{
 								"source": {
-									"name": "DeveloperName",
+									"name": "ParentRoleId",
 									"type": "String"
 								},
 								"sink": {
-									"name": "DeveloperName",
+									"name": "ParentRoleId",
 									"type": "String"
 								}
 							},
@@ -169,11 +149,11 @@
 							},
 							{
 								"source": {
-									"name": "PortalType",
+									"name": "PortalAccountOwnerId",
 									"type": "String"
 								},
 								"sink": {
-									"name": "PortalType",
+									"name": "PortalAccountOwnerId",
 									"type": "String"
 								}
 							},
@@ -189,12 +169,31 @@
 							},
 							{
 								"source": {
-									"name": "PortalAccountOwnerId",
+									"name": "PortalType",
 									"type": "String"
 								},
 								"sink": {
-									"name": "PortalAccountOwnerId",
+									"name": "PortalType",
 									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RollupDescription",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RollupDescription",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "systemmodstamp"
+								},
+								"sink": {
+									"name": "SystemModstamp",
+									"type": "DateTime"
 								}
 							}
 						]
