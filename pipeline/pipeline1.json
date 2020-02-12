@@ -113,7 +113,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "MayForecastManagerShare",
+									"name": "Name",
 									"type": "String"
 								}
 							},
@@ -189,7 +189,8 @@
 							},
 							{
 								"source": {
-									"name": "systemmodstamp"
+									"name": "SystemModstamp",
+									"type": "DateTime"
 								},
 								"sink": {
 									"name": "SystemModstamp",
