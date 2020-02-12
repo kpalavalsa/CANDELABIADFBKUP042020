@@ -1,0 +1,33 @@
+{
+	"name": "UserRole",
+	"properties": {
+		"activities": [
+			{
+				"name": "UserRole",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SalesforceSource",
+						"query": "select CaseAccessForAccountOwner,ContactAccessForAccountOwner,DeveloperName,ForecastUserId,Id,LastModifiedById,LastModifiedDate,MayForecastManagerShare,Name,OpportunityAccessForAccountOwner,ParentRoleId,PortalAccountId,PortalAccountOwnerId,PortalRole,PortalType,RollupDescription,SystemModstamp from UserRole",
+						"readBehavior": "query"
+					},
+					"dataset": {
+						"referenceName": "Salesforce_Source",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"annotations": []
+	}
+}
