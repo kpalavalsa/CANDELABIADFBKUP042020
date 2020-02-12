@@ -1,0 +1,87 @@
+{
+	"name": "AzureSQLCandelaKPI",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ParentRoleId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RollupDescription",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OpportunityAccessForAccountOwner",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CaseAccessForAccountOwner",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ContactAccessForAccountOwner",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ForecastUserId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MayForecastManagerShare",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastModifiedDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "LastModifiedById",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SystemModstamp",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "DeveloperName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PortalAccountId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PortalType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PortalRole",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PortalAccountOwnerId",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "salesforce",
+			"table": "UserRole"
+		}
+	}
+}
