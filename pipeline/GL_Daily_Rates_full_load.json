@@ -20,6 +20,9 @@
 						"sqlReaderQuery": "SELECT FROM_CURRENCY,TO_CURRENCY,CONVERSION_DATE,CONVERSION_TYPE,CONVERSION_RATE,STATUS_CODE,CREATION_DATE,CREATED_BY,LAST_UPDATE_DATE,LAST_UPDATED_BY,LAST_UPDATE_LOGIN,CONTEXT,RATE_SOURCE_CODE\n FROM dbo.GL_DAILY_RATES",
 						"queryTimeout": "02:00:00"
 					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
 					"enableStaging": false,
 					"translator": {
 						"type": "TabularTranslator",
@@ -160,6 +163,12 @@
 				"inputs": [
 					{
 						"referenceName": "DatControlMaster_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "testsink11",
 						"type": "DatasetReference"
 					}
 				]

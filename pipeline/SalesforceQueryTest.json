@@ -90,7 +90,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "testkpidev",
 						"type": "DatasetReference"
 					}
 				]
