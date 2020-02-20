@@ -369,7 +369,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"name": "[concat(parameters('factoryName'), '/AzureSQLCandelaKPI')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -381,717 +381,79 @@
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "HEADER_ID",
+						"name": "Id",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORG_ID",
+						"name": "Name",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORDER_TYPE_ID",
+						"name": "ParentRoleId",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORDER_NUMBER",
+						"name": "RollupDescription",
 						"type": "nvarchar"
 					},
 					{
-						"name": "VERSION_NUMBER",
+						"name": "OpportunityAccessForAccountOwner",
 						"type": "nvarchar"
 					},
 					{
-						"name": "EXPIRATION_DATE",
+						"name": "CaseAccessForAccountOwner",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORDER_SOURCE_ID",
+						"name": "ContactAccessForAccountOwner",
 						"type": "nvarchar"
 					},
 					{
-						"name": "SOURCE_DOCUMENT_TYPE_ID",
+						"name": "ForecastUserId",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORIG_SYS_DOCUMENT_REF",
+						"name": "MayForecastManagerShare",
 						"type": "nvarchar"
 					},
 					{
-						"name": "SOURCE_DOCUMENT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ORDERED_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "REQUEST_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PRICING_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIPMENT_PRIORITY_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DEMAND_CLASS_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PRICE_LIST_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TAX_EXEMPT_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TAX_EXEMPT_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TAX_EXEMPT_REASON_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CONVERSION_RATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CONVERSION_TYPE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CONVERSION_RATE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PARTIAL_SHIPMENTS_ALLOWED",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_TOLERANCE_ABOVE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_TOLERANCE_BELOW",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TRANSACTIONAL_CURR_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AGREEMENT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TAX_POINT_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUST_PO_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "INVOICING_RULE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ACCOUNTING_RULE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PAYMENT_TERM_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIPPING_METHOD_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FREIGHT_CARRIER_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FOB_POINT_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FREIGHT_TERMS_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_FROM_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_TO_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_FROM_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_TO_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "INVOICE_TO_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DELIVER_TO_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_TO_CONTACT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_TO_CONTACT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "INVOICE_TO_CONTACT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DELIVER_TO_CONTACT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREATION_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREATED_BY",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_UPDATED_BY",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_UPDATE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_UPDATE_LOGIN",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PROGRAM_APPLICATION_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PROGRAM_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PROGRAM_UPDATE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "REQUEST_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CONTEXT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE3",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE4",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE5",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE6",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE7",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE8",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE9",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE10",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE11",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE12",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE13",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE14",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE15",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE_CATEGORY",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE3",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE4",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE5",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE6",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE7",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE8",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE9",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE10",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE11",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE12",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE13",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE14",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE15",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE16",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE17",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE18",
-						"type": "nvarchar"
+						"name": "LastModifiedDate",
+						"type": "datetime2",
+						"scale": 7
 					},
 					{
-						"name": "GLOBAL_ATTRIBUTE19",
+						"name": "LastModifiedById",
 						"type": "nvarchar"
 					},
 					{
-						"name": "GLOBAL_ATTRIBUTE20",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CANCELLED_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "OPEN_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BOOKED_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SALESREP_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "RETURN_REASON_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ORDER_DATE_TYPE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EARLIEST_SCHEDULE_LIMIT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LATEST_SCHEDULE_LIMIT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PAYMENT_TYPE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PAYMENT_AMOUNT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CHECK_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_HOLDER_NAME",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_EXPIRATION_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_APPROVAL_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SALES_CHANNEL_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FIRST_ACK_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FIRST_ACK_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_ACK_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_ACK_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ORDER_CATEGORY_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CHANGE_SEQUENCE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DROP_SHIP_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUSTOMER_PAYMENT_TERM_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIPPING_INSTRUCTIONS",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PACKING_INSTRUCTIONS",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_CONTEXT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE3",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE4",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE5",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE6",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE7",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE8",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE9",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE10",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE11",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE12",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE13",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE14",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE15",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FLOW_STATUS_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MARKETING_SOURCE_CODE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_APPROVAL_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "UPGRADED_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUSTOMER_PREFERENCE_SET_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BOOKED_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LOCK_CONTROL",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PRICE_REQUEST_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE16",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE17",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE18",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE19",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE20",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BATCH_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "XML_MESSAGE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ACCOUNTING_RULE_DURATION",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BLANKET_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SALES_DOCUMENT_TYPE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_TO_PHONE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FULFILLMENT_SET_NAME",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LINE_SET_NAME",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DEFAULT_FULFILLMENT_SET",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ORDER_FIRMED_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TRANSACTION_PHASE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SALES_DOCUMENT_NAME",
-						"type": "nvarchar"
-					},
-					{
-						"name": "QUOTE_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "QUOTE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "USER_STATUS_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DRAFT_SUBMITTED_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOURCE_DOCUMENT_VERSION_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_TO_SITE_USE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SUPPLIER_SIGNATURE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SUPPLIER_SIGNATURE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUSTOMER_SIGNATURE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUSTOMER_SIGNATURE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MINISITE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "END_CUSTOMER_ID",
-						"type": "nvarchar"
+						"name": "SystemModstamp",
+						"type": "datetime2",
+						"scale": 7
 					},
 					{
-						"name": "END_CUSTOMER_CONTACT_ID",
+						"name": "DeveloperName",
 						"type": "nvarchar"
 					},
 					{
-						"name": "END_CUSTOMER_SITE_USE_ID",
+						"name": "PortalAccountId",
 						"type": "nvarchar"
 					},
 					{
-						"name": "IB_OWNER",
+						"name": "PortalType",
 						"type": "nvarchar"
 					},
 					{
-						"name": "IB_CURRENT_LOCATION",
+						"name": "PortalRole",
 						"type": "nvarchar"
 					},
 					{
-						"name": "IB_INSTALLED_AT_LOCATION",
+						"name": "PortalAccountOwnerId",
 						"type": "nvarchar"
 					}
 				],
 				"typeProperties": {
-					"schema": "TEST1",
-					"table": "ACCOUNT"
+					"schema": "salesforce",
+					"table": "UserRole"
 				}
 			},
 			"dependsOn": [

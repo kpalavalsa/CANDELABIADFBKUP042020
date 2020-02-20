@@ -521,6 +521,196 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/GL_Daily_Rates_full_load')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GL_Daily_Rates_Full_load",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT FROM_CURRENCY,TO_CURRENCY,CONVERSION_DATE,CONVERSION_TYPE,CONVERSION_RATE,STATUS_CODE,CREATION_DATE,CREATED_BY,LAST_UPDATE_DATE,LAST_UPDATED_BY,LAST_UPDATE_LOGIN,CONTEXT,RATE_SOURCE_CODE\n FROM dbo.GL_DAILY_RATES",
+								"queryTimeout": "02:00:00"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "FROM_CURRENCY",
+											"type": "String"
+										},
+										"sink": {
+											"name": "FROM_CURRENCY",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TO_CURRENCY",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TO_CURRENCY",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CONVERSION_DATE",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CONVERSION_DATE",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CONVERSION_TYPE",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CONVERSION_TYPE",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CONVERSION_RATE",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CONVERSION_RATE",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "STATUS_CODE",
+											"type": "String"
+										},
+										"sink": {
+											"name": "STATUS_CODE",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CREATION_DATE",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CREATION_DATE",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CREATED_BY",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CREATED_BY",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LAST_UPDATE_DATE",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LAST_UPDATE_DATE",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LAST_UPDATED_BY",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LAST_UPDATED_BY",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LAST_UPDATE_LOGIN",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LAST_UPDATE_LOGIN",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CONTEXT",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CONTEXT",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "RATE_SOURCE_CODE",
+											"type": "String"
+										},
+										"sink": {
+											"name": "RATE_SOURCE_CODE",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DatControlMaster_Source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "testsink11",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Test"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DatControlMaster_Source')]",
+				"[concat(variables('factoryId'), '/datasets/testsink11')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PL_CANDELAKPI')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -8730,6 +8920,186 @@
 										"referenceName": "AzureSqlDatabase",
 										"type": "LinkedServiceReference"
 									}
+								},
+								{
+									"name": "Load_Fact_Opportunity_History",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Incremental_Load_Dimension_Success_Log",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[salesforce].SP_M_INCREMENTAL_LOAD_FACT_OPPORTUNITY_HISTORY"
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Load_Fact_Opportunity_History_Success_Log",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Load_Fact_Opportunity_History",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": null,
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "INFO",
+												"type": "String"
+											},
+											"Summary": {
+												"value": "Loading Bizible_Attribution_Fact tables are completed successfully",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Load_Fact_Opportunity_History_Failure_Log",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Load_Fact_Opportunity_History",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": {
+													"value": "@substring(activity('Load_Fact_Opportunity_History').Error.Message,0,if(greater(length(activity('Load_Fact_Opportunity_History').Error.Message),1990),1990,sub(length(activity('Load_Fact_Opportunity_History').Error.Message),2)))",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "ERROR",
+												"type": "String"
+											},
+											"Summary": {
+												"value": "Failed to Load Fact Tables",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
 								}
 							]
 						}
@@ -9492,6 +9862,186 @@
 										"referenceName": "AzureSqlDatabase",
 										"type": "LinkedServiceReference"
 									}
+								},
+								{
+									"name": "Load_Fact_Opportunity_History",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Full_Load_Dimensions_Success_Log",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[test]"
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Load_Fact_Opportunity_History_Success_Log",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Load_Fact_Opportunity_History",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": null,
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "INFO",
+												"type": "String"
+											},
+											"Summary": {
+												"value": "Loading Fact tables are completed successfully",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Load_Fact_Opportunity_History_Failure_Log",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Load_Fact_Opportunity_History",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[BI].[SP_M_Logger]",
+										"storedProcedureParameters": {
+											"CopyDuration": {
+												"value": null,
+												"type": "Int64"
+											},
+											"ErrorInfo": {
+												"value": {
+													"value": "@substring(activity('Load_Fact_Opportunity_History').Error.Message,0,if(greater(length(activity('Load_Fact_Opportunity_History').Error.Message),1990),1990,sub(length(activity('Load_Fact_Opportunity_History').Error.Message),2)))",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"LOGSPATH": {
+												"value": null,
+												"type": "String"
+											},
+											"ProcessName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RecordsCopiedToDest": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RecordsInSource": {
+												"value": null,
+												"type": "Int64"
+											},
+											"RunId": {
+												"value": {
+													"value": "@pipeline().parameters.RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"SkippedRecordsToMove": {
+												"value": null,
+												"type": "Int64"
+											},
+											"Status": {
+												"value": "ERROR",
+												"type": "String"
+											},
+											"Summary": {
+												"value": "Failed to Load Fact Tables",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
 								}
 							]
 						}
@@ -9845,7 +10395,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "AzureSqlTable1",
+								"referenceName": "testkpidev",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -9878,7 +10428,276 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Salesforce_Source')]",
 				"[concat(variables('factoryId'), '/datasets/DQTarget')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]"
+				"[concat(variables('factoryId'), '/datasets/testkpidev')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UserRole')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "UserRole",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SalesforceSource",
+								"query": "select CaseAccessForAccountOwner,ContactAccessForAccountOwner,DeveloperName,ForecastUserId,Id,LastModifiedById,LastModifiedDate,MayForecastManagerShare,Name,OpportunityAccessForAccountOwner,ParentRoleId,PortalAccountId,PortalAccountOwnerId,PortalRole,PortalType,RollupDescription,SystemModstamp from UserRole",
+								"readBehavior": "query"
+							},
+							"dataset": {
+								"referenceName": "Salesforce_Source",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Salesforce_Source')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UserRoleFullLoad')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "UserRole",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SalesforceSource",
+								"query": "select CaseAccessForAccountOwner,ContactAccessForAccountOwner,DeveloperName,ForecastUserId,Id,LastModifiedById,LastModifiedDate,MayForecastManagerShare,Name,OpportunityAccessForAccountOwner,ParentRoleId,PortalAccountId,PortalAccountOwnerId,PortalRole,PortalType,RollupDescription,SystemModstamp from UserRole",
+								"readBehavior": "query"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "CaseAccessForAccountOwner",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CaseAccessForAccountOwner",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ContactAccessForAccountOwner",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ContactAccessForAccountOwner",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "DeveloperName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "DeveloperName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ForecastUserId",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ForecastUserId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Id",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LastModifiedById",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastModifiedById",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LastModifiedDate",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "LastModifiedDate",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "MayForecastManagerShare",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "MayForecastManagerShare",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "OpportunityAccessForAccountOwner",
+											"type": "String"
+										},
+										"sink": {
+											"name": "OpportunityAccessForAccountOwner",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ParentRoleId",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ParentRoleId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PortalAccountId",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PortalAccountId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PortalAccountOwnerId",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PortalAccountOwnerId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PortalRole",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PortalRole",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PortalType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PortalType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "RollupDescription",
+											"type": "String"
+										},
+										"sink": {
+											"name": "RollupDescription",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SystemModstamp",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "SystemModstamp",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Salesforce_Source",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLCandelaKPI",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Test"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Salesforce_Source')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSQLCandelaKPI')]"
 			]
 		},
 		{
@@ -9978,7 +10797,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"name": "[concat(parameters('factoryName'), '/AzureSQLCandelaKPI')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -9990,717 +10809,79 @@
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "HEADER_ID",
+						"name": "Id",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORG_ID",
+						"name": "Name",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORDER_TYPE_ID",
+						"name": "ParentRoleId",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORDER_NUMBER",
+						"name": "RollupDescription",
 						"type": "nvarchar"
 					},
 					{
-						"name": "VERSION_NUMBER",
+						"name": "OpportunityAccessForAccountOwner",
 						"type": "nvarchar"
 					},
 					{
-						"name": "EXPIRATION_DATE",
+						"name": "CaseAccessForAccountOwner",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORDER_SOURCE_ID",
+						"name": "ContactAccessForAccountOwner",
 						"type": "nvarchar"
 					},
 					{
-						"name": "SOURCE_DOCUMENT_TYPE_ID",
+						"name": "ForecastUserId",
 						"type": "nvarchar"
 					},
 					{
-						"name": "ORIG_SYS_DOCUMENT_REF",
+						"name": "MayForecastManagerShare",
 						"type": "nvarchar"
 					},
 					{
-						"name": "SOURCE_DOCUMENT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ORDERED_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "REQUEST_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PRICING_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIPMENT_PRIORITY_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DEMAND_CLASS_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PRICE_LIST_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TAX_EXEMPT_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TAX_EXEMPT_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TAX_EXEMPT_REASON_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CONVERSION_RATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CONVERSION_TYPE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CONVERSION_RATE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PARTIAL_SHIPMENTS_ALLOWED",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_TOLERANCE_ABOVE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_TOLERANCE_BELOW",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TRANSACTIONAL_CURR_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AGREEMENT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TAX_POINT_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUST_PO_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "INVOICING_RULE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ACCOUNTING_RULE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PAYMENT_TERM_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIPPING_METHOD_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FREIGHT_CARRIER_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FOB_POINT_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FREIGHT_TERMS_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_FROM_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_TO_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_FROM_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_TO_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "INVOICE_TO_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DELIVER_TO_ORG_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_TO_CONTACT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIP_TO_CONTACT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "INVOICE_TO_CONTACT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DELIVER_TO_CONTACT_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREATION_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREATED_BY",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_UPDATED_BY",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_UPDATE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_UPDATE_LOGIN",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PROGRAM_APPLICATION_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PROGRAM_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PROGRAM_UPDATE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "REQUEST_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CONTEXT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE3",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE4",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE5",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE6",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE7",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE8",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE9",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE10",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE11",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE12",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE13",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE14",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE15",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE_CATEGORY",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE3",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE4",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE5",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE6",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE7",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE8",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE9",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE10",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE11",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE12",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE13",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE14",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE15",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE16",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE17",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GLOBAL_ATTRIBUTE18",
-						"type": "nvarchar"
+						"name": "LastModifiedDate",
+						"type": "datetime2",
+						"scale": 7
 					},
 					{
-						"name": "GLOBAL_ATTRIBUTE19",
+						"name": "LastModifiedById",
 						"type": "nvarchar"
 					},
 					{
-						"name": "GLOBAL_ATTRIBUTE20",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CANCELLED_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "OPEN_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BOOKED_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SALESREP_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "RETURN_REASON_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ORDER_DATE_TYPE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EARLIEST_SCHEDULE_LIMIT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LATEST_SCHEDULE_LIMIT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PAYMENT_TYPE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PAYMENT_AMOUNT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CHECK_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_HOLDER_NAME",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_EXPIRATION_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_APPROVAL_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SALES_CHANNEL_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FIRST_ACK_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FIRST_ACK_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_ACK_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LAST_ACK_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ORDER_CATEGORY_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CHANGE_SEQUENCE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DROP_SHIP_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUSTOMER_PAYMENT_TERM_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SHIPPING_INSTRUCTIONS",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PACKING_INSTRUCTIONS",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_CONTEXT",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE1",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE2",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE3",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE4",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE5",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE6",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE7",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE8",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE9",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE10",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE11",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE12",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE13",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE14",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TP_ATTRIBUTE15",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FLOW_STATUS_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MARKETING_SOURCE_CODE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CREDIT_CARD_APPROVAL_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "UPGRADED_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUSTOMER_PREFERENCE_SET_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BOOKED_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LOCK_CONTROL",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PRICE_REQUEST_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE16",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE17",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE18",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE19",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ATTRIBUTE20",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BATCH_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "XML_MESSAGE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ACCOUNTING_RULE_DURATION",
-						"type": "nvarchar"
-					},
-					{
-						"name": "BLANKET_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SALES_DOCUMENT_TYPE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_TO_PHONE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FULFILLMENT_SET_NAME",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LINE_SET_NAME",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DEFAULT_FULFILLMENT_SET",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ORDER_FIRMED_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TRANSACTION_PHASE_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SALES_DOCUMENT_NAME",
-						"type": "nvarchar"
-					},
-					{
-						"name": "QUOTE_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "QUOTE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "USER_STATUS_CODE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DRAFT_SUBMITTED_FLAG",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOURCE_DOCUMENT_VERSION_NUMBER",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SOLD_TO_SITE_USE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SUPPLIER_SIGNATURE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SUPPLIER_SIGNATURE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUSTOMER_SIGNATURE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CUSTOMER_SIGNATURE_DATE",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MINISITE_ID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "END_CUSTOMER_ID",
-						"type": "nvarchar"
+						"name": "SystemModstamp",
+						"type": "datetime2",
+						"scale": 7
 					},
 					{
-						"name": "END_CUSTOMER_CONTACT_ID",
+						"name": "DeveloperName",
 						"type": "nvarchar"
 					},
 					{
-						"name": "END_CUSTOMER_SITE_USE_ID",
+						"name": "PortalAccountId",
 						"type": "nvarchar"
 					},
 					{
-						"name": "IB_OWNER",
+						"name": "PortalType",
 						"type": "nvarchar"
 					},
 					{
-						"name": "IB_CURRENT_LOCATION",
+						"name": "PortalRole",
 						"type": "nvarchar"
 					},
 					{
-						"name": "IB_INSTALLED_AT_LOCATION",
+						"name": "PortalAccountOwnerId",
 						"type": "nvarchar"
 					}
 				],
 				"typeProperties": {
-					"schema": "TEST1",
-					"table": "ACCOUNT"
+					"schema": "salesforce",
+					"table": "UserRole"
 				}
 			},
 			"dependsOn": [
@@ -10958,12 +11139,220 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "dbo",
-					"table": "testproduct2"
+					"schema": "SALESFORCE_STAGE",
+					"table": "UserRole"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/testsink11')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FROM_CURRENCY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TO_CURRENCY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONVERSION_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONVERSION_TYPE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONVERSION_RATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "STATUS_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREATION_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREATED_BY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_UPDATE_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_UPDATED_BY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_UPDATE_LOGIN",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONTEXT",
+						"type": "nvarchar"
+					},
+					{
+						"name": "RATE_SOURCE_CODE",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "ORACLE",
+					"table": "GL_DAILY_RATES"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/testsource111')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataControlMaster",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FROM_CURRENCY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TO_CURRENCY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONVERSION_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONVERSION_TYPE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONVERSION_RATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "STATUS_CODE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREATION_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CREATED_BY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_UPDATE_DATE",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_UPDATED_BY",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LAST_UPDATE_LOGIN",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CONTEXT",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE3",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE4",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE5",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE6",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE7",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE8",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE9",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE10",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE11",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE12",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE13",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE14",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ATTRIBUTE15",
+						"type": "nvarchar"
+					},
+					{
+						"name": "RATE_SOURCE_CODE",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "GL_DAILY_RATES"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DataControlMaster')]"
 			]
 		},
 		{
