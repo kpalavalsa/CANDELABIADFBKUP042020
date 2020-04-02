@@ -1,5 +1,6 @@
 {
 	"name": "Salesforce",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "Salesforce",
@@ -15,14 +16,9 @@
 				"secretName": "azureAPI"
 			},
 			"securityToken": {
-				"type": "AzureKeyVaultSecret",
-				"store": {
-					"referenceName": "AzureKeyVault",
-					"type": "LinkedServiceReference"
-				},
-				"secretName": "AzureAPISecret"
+				"type": "SecureString",
+				"value": "**********"
 			}
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/linkedservices"
+	}
 }
