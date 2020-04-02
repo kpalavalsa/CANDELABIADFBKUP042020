@@ -81,7 +81,7 @@
 		],
 		"typeProperties": {
 			"schema": "salesforce",
-			"table": "UserRole"
+			"table": "DocuSign_Status"
 		}
 	}
 }
