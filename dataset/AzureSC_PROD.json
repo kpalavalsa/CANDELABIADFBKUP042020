@@ -1,0 +1,1587 @@
+{
+	"name": "AzureSC_PROD",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSC_PROD_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ACCEPTABLE_EARLY_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BUYER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCOUNTING_RULE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVOICING_RULE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE_CATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE6",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE7",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE8",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE9",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE10",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE11",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE12",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE13",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE14",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE15",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PURCHASING_ITEM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SHIPPABLE_ITEM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUSTOMER_ORDER_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INTERNAL_ORDER_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVENTORY_ITEM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVENTORY_ASSET_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PURCHASING_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUSTOMER_ORDER_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INTERNAL_ORDER_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SO_TRANSACTIONS_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MTL_TRANSACTIONS_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STOCK_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BUILD_IN_WIP_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REVISION_QTY_CONTROL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RETURNABLE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEFAULT_SHIPPING_ORG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COLLATERAL_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TAXABLE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QTY_RCV_EXCEPTION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ALLOW_ITEM_DESC_UPDATE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MARKET_PRICE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HAZARD_CLASS_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NEGOTIATION_REQUIRED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QTY_RCV_TOLERANCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LIST_PRICE_PER_UNIT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PRICE_TOLERANCE_PERCENT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ENFORCE_SHIP_TO_LOCATION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ALLOW_SUBSTITUTE_RECEIPTS_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ALLOW_UNORDERED_RECEIPTS_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ALLOW_EXPRESS_DELIVERY_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DAYS_EARLY_RECEIPT_ALLOWED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DAYS_LATE_RECEIPT_ALLOWED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RECEIPT_DAYS_EXCEPTION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RECEIVING_ROUTING_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVOICE_CLOSE_TOLERANCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RECEIVE_CLOSE_TOLERANCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTO_LOT_ALPHA_PREFIX",
+				"type": "nvarchar"
+			},
+			{
+				"name": "START_AUTO_LOT_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOT_CONTROL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SHELF_LIFE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SHELF_LIFE_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERIAL_NUMBER_CONTROL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "START_AUTO_SERIAL_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTO_SERIAL_ALPHA_PREFIX",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_SUBINVENTORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESTRICT_SUBINVENTORIES_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNIT_WEIGHT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WEIGHT_UOM_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VOLUME_UOM_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNIT_VOLUME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESTRICT_LOCATORS_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOCATION_CONTROL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLANNING_TIME_FENCE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEMAND_TIME_FENCE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LEAD_TIME_LOT_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STD_LOT_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUM_MANUFACTURING_LEAD_TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MRP_CALCULATE_ATP_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUMULATIVE_TOTAL_LEAD_TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLANNING_TIME_FENCE_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEMAND_TIME_FENCE_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "END_ASSEMBLY_PEGGING_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BOM_ITEM_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PICK_COMPONENTS_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPLENISH_TO_ORDER_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATP_COMPONENTS_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATP_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FIXED_LEAD_TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VARIABLE_LEAD_TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WIP_SUPPLY_LOCATOR_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WIP_SUPPLY_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WIP_SUPPLY_SUBINVENTORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRIMARY_UOM_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ALLOWED_UNITS_LOOKUP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEFAULT_INCLUDE_IN_ROLLUP_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVENTORY_ITEM_STATUS_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVENTORY_PLANNING_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLANNER_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLANNING_MAKE_BUY_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FIXED_LOT_MULTIPLIER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ROUNDING_CONTROL_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CARRYING_COST",
+				"type": "nvarchar"
+			},
+			{
+				"name": "POSTPROCESSING_LEAD_TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREPROCESSING_LEAD_TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FULL_LEAD_TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ORDER_COST",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MRP_SAFETY_STOCK_PERCENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MIN_MINMAX_QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAX_MINMAX_QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MINIMUM_ORDER_QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FIXED_ORDER_QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FIXED_DAYS_SUPPLY",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "MAXIMUM_ORDER_QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATP_RULE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PICKING_RULE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESERVABLE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "POSITIVE_MEASUREMENT_ERROR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NEGATIVE_MEASUREMENT_ERROR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERVICE_STARTING_DELAY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERVICEABLE_PRODUCT_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PAYMENT_TERMS_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MATERIAL_BILLABLE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COVERAGE_SCHEDULE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERVICE_DURATION_PERIOD_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERVICE_DURATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVOICEABLE_ITEM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVOICE_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MUST_USE_APPROVED_VENDOR_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OUTSIDE_OPERATION_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OUTSIDE_OPERATION_UOM_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COSTING_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTO_CREATED_CONFIG_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CYCLE_COUNT_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SHIP_MODEL_COMPLETE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MRP_PLANNING_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RETURN_INSPECTION_REQUIREMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATO_FORECAST_CONTROL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RELEASE_TIME_FENCE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RELEASE_TIME_FENCE_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTAINER_ITEM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VEHICLE_ITEM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAXIMUM_LOAD_WEIGHT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MINIMUM_FILL_PERCENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTAINER_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INTERNAL_VOLUME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PURCHASING_TAX_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OVERCOMPLETION_TOLERANCE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OVERCOMPLETION_TOLERANCE_VALUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EFFECTIVITY_CONTROL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHECK_SHORTAGES_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OVER_SHIPMENT_TOLERANCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNDER_SHIPMENT_TOLERANCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OVER_RETURN_TOLERANCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNDER_RETURN_TOLERANCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EQUIPMENT_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RECOVERED_PART_DISP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEFECT_TRACKING_ON_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EVENT_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMMS_NL_TRACKABLE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ASSET_CREATION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMMS_ACTIVATION_REQD_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ORDERABLE_ON_WEB_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BACK_ORDERABLE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WEB_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INDIVISIBLE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIMENSION_UOM_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNIT_LENGTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNIT_WIDTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNIT_HEIGHT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BULK_PICKED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOT_STATUS_ENABLED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEFAULT_LOT_STATUS_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERIAL_STATUS_ENABLED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEFAULT_SERIAL_STATUS_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOT_SPLIT_ENABLED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOT_MERGE_ENABLED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVENTORY_CARRY_PENALTY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OPERATION_SLACK_PENALTY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FINANCING_ALLOWED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EAM_ITEM_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTRACT_ITEM_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERV_REQ_ENABLED_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERV_BILLING_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLANNED_INV_POINT_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOT_TRANSLATE_ENABLED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEFAULT_SO_SOURCE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATE_SUPPLY_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IB_ITEM_INSTANCE_CLASS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONFIG_MODEL_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOT_SUBSTITUTION_ENABLED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MINIMUM_LICENSE_QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TRACKING_QUANTITY_IND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ONT_PRICING_QTY_SOURCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECONDARY_DEFAULT_IND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VMI_MAXIMUM_UNITS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VMI_MAXIMUM_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SO_AUTHORIZATION_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONSIGNED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ASN_AUTOEXPIRE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VMI_FORECAST_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FORECAST_HORIZON",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EXCLUDE_FROM_BUDGET_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DAYS_TGT_INV_SUPPLY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DAYS_TGT_INV_WINDOW",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DAYS_MAX_INV_SUPPLY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DAYS_MAX_INV_WINDOW",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DRP_PLANNED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CRITICAL_COMPONENT_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONFIG_ORGS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONFIG_MATCH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE16",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE17",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE18",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE19",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE20",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE21",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE22",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE23",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ATTRIBUTE24",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CAS_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COPY_LOT_ATTRIBUTE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HAZARDOUS_MATERIAL_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HOLD_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOT_DIVISIBLE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MATURITY_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHARGE_PERIODICITY_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPAIR_LEADTIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OUTSOURCED_ASSEMBLY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ASSET_TRACKED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ASSET_CLASS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERVICE_START_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "START_UPON_MILESTONE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REQUIRES_FULFILLMENT_LOC_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REQUIRES_ITM_ASSOCIATION_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STYLE_ITEM_ID",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "STYLE_ITEM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ELIGIBILITY_COMPATIBILITY_RULE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVENTORY_ITEM_ID",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ORGANIZATION_ID",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "LAST_UPDATE_DATE",
+				"type": "date"
+			},
+			{
+				"name": "LAST_UPDATE_LOGIN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATION_DATE",
+				"type": "date"
+			},
+			{
+				"name": "VERSION_START_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MATCH_APPROVAL_LEVEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVOICE_MATCH_OPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ASSET_CATEGORY_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EXPENSE_ACCOUNT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SALES_ACCOUNT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SALES_PRODUCT_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SALES_PRODUCT_SUB_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BACK_TO_BACK_ENABLED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTRACT_MANUFACTURING",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEMAND_PERIOD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DAYS_OF_COVER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ENGINEERED_ITEM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPLACEMENT_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LONG_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_CLASS_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EFFECTIVITY_DATE",
+				"type": "date"
+			},
+			{
+				"name": "SUB_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CROSS_REFERENCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ORG_INDEPENDENT_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_RELATIONSHIP_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TP_ITEM_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RELATED_ITEM_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERVICE_START_DELAY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TRADING_PARTNER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_SYSTEM_REFERENCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MASTER_ORGANIZATION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REVISION_REASON",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ORGANIZATION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ORG_ID_MAP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Product_Line",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AR_Tax_Catalog",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Direct_Catalog",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Planning_Catalog",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Product_Company",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sourcing_Catalog",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ALLOW_MAINTENANCE_ASSET_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ALLOW_SUSPEND_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ALLOW_TERMINATE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHILD_LOT_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHILD_LOT_PREFIX",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHILD_LOT_STARTING_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHILD_LOT_VALIDATION_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEFAULT_GRADE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EXPIRATION_ACTION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EXPIRATION_ACTION_INTERVAL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OUTSIDE_PROCESS_SERVICE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREPOSITION_POINT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROCESS_SUPPLY_SUBINVENTORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROCESS_YIELD_SUBINVENTORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPAIR_PROGRAM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPAIR_YIELD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RETEST_INTERVAL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ROUNDING_FACTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SAFETY_STOCK_PLANNING_METHOD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SHRINKAGE_RATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBCONTRACTING_COMPONENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBSTITUTION_WINDOW_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBSTITUTION_WINDOW_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TEMPLATE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNIT_OF_ISSUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCEPTABLE_RATE_DECREASE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCEPTABLE_RATE_INCREASE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACD_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "APPROVAL_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTO_REDUCE_MPS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BASE_ITEM_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHANGE_BIT_MAP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHANGE_LINE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMPLETENESS_SCORE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTINOUS_TRANSFER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONVERGENCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_BY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CSS_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CURRENT_PHASE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CURRENT_PHASE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEFAULT_TEMPLATE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIVERGENCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DOWNLOADABLE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DQ_REQUIRED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DQ_SEMANTIC_KEY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DUAL_UOM_CONTROL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DUAL_UOM_DEVIATION_HIGH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DUAL_UOM_DEVIATION_LOW",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EAM_ACT_NOTIFICATION_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EAM_ACT_SHUTDOWN_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EAM_ACTIVITY_CAUSE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EAM_ACTIVITY_SOURCE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EAM_ACTIVITY_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ELECTRONIC_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ENABLE_GENEALOGY_TRACKING_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "END_DATE_ACTIVE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ENGINEERING_ITEM_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GDSN_OUTBOUND_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GRADE_CONTROL_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IMPLEMENTATION_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INSPECTION_REQUIRED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVENTORY_ORGANIZATION_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_CATALOG_GROUP_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_CLASSIFIED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "JOB_DEFINITION_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "JOB_DEFINITION_PACKAGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LAST_SUBMITTED_NIR_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LAST_UPDATED_BY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MASTER_ITEM_VERSION_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MASTER_ORG_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MRP_SAFETY_STOCK_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OBJECT_VERSION_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OPTION_SPECIFIC_SOURCED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OVERRUN_PERCENTAGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PARENT_CHILD_GENERATION_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLANNING_EXCEPTION_SET",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROCESS_COSTING_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROCESS_EXECUTION_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROCESS_QUALITY_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROCESS_SUPPLY_LOCATOR_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROCESS_YIELD_LOCATOR_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_FAMILY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_FAMILY_ITEM_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROGRAM_APP_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROGRAM_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QSC_SALES_PRODUCT_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RECEIPT_REQUIRED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RECIPE_ENABLED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPETITIVE_PLANNING_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REQUEST_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SAFETY_STOCK_BUCKET_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECONDARY_UOM_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SERVICE_DURATION_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_ORGANIZATION_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "START_DATE_ACTIVE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUMMARY_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TAX_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TEMPLATE_ITEM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "THREAD_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TRADE_ITEM_DESCRIPTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UN_NUMBER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VERSION_END_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VERSION_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VMI_FIXED_ORDER_QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VMI_MINIMUM_DAYS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VMI_MINIMUM_UNITS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WH_UPDATE_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GL_PRODUCT_CODE",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "CLOUD_BASE",
+			"table": "ITEM_MASTER_EXTRACT"
+		}
+	}
+}
